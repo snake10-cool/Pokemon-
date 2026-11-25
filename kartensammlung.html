@@ -86,9 +86,12 @@ a{color:var(--accent)}
 .who b{color:var(--ink)}
 .login{max-width:420px;margin:48px auto;display:grid;gap:14px}
 .login h2{font-size:1.5rem}
-.pic{aspect-ratio:5/7;max-width:100%;border-radius:8px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;cursor:zoom-in;border:0;padding:0}
+.card{grid-template-columns:84px minmax(0,1fr);column-gap:12px;align-content:start}
+.card>*:not(.pic){grid-column:2}
+.pic{grid-column:1;grid-row:1 / span 6;align-self:start;width:84px;aspect-ratio:5/7;border-radius:6px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;cursor:zoom-in;border:0;padding:0}
 .pic img{width:100%;height:100%;object-fit:cover;display:block}
-.pic span{font-size:.78rem;color:var(--muted);padding:8px;text-align:center}
+.pic span{font-size:.66rem;line-height:1.25;color:var(--muted);padding:4px;text-align:center}
+.grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 .zoom{position:fixed;inset:0;z-index:20;background:rgba(10,12,25,.82);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));cursor:zoom-out}
 .zoom img{max-height:92vh;max-width:100%;border-radius:12px}
 .chip.var{background:var(--accent);color:var(--accent-ink)}
@@ -330,7 +333,7 @@ function renderCards(){
   if(!list.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">Keine Karte passt zu deiner Suche.</div>`;return}
   el.innerHTML=list.map(c=>`
     <article class="card" style="--tc:${typeVar(c.type)}" data-id="${esc(c.id)}">
-      <button class="pic" type="button" data-act="zoom" aria-label="Bild von ${esc(c.name)} vergrößern">${c.img&&(/^https:\/\//.test(c.img)||c.img.startsWith("/_blob/"))?`<img src="${esc(c.img)}" alt="${esc(c.name)}" loading="lazy">`:`<span>Kein Foto. Über „Bearbeiten“ kannst du eins hinzufügen.</span>`}</button>
+      <button class="pic" type="button" data-act="zoom" aria-label="Bild von ${esc(c.name)} vergrößern">${c.img&&(/^https:\/\//.test(c.img)||c.img.startsWith("/_blob/"))?`<img src="${esc(c.img)}" alt="${esc(c.name)}" loading="lazy">`:`<span>Kein Foto</span>`}</button>
       <h3>${esc(c.name)}</h3>
       <div class="meta"><span>${esc(c.set||"Ohne Set")}</span>${c.setCode?`<span class="num">${esc(c.setCode)}</span>`:""}${c.number?`<span class="num">${esc(c.number)}</span>`:""}<span>${esc(c.condition||"")}</span></div>
       <div class="chips">
