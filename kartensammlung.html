@@ -113,7 +113,10 @@ a{color:var(--accent)}
 .qrbox{background:#ffffff;padding:12px;border-radius:12px;width:max-content;max-width:100%}
 .qrbox canvas,.qrbox img{display:block;max-width:100%;height:auto}
 .scanout{font-size:.85rem}
-.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+.scanwrap{position:relative;overflow:hidden;display:inline-block}
+.scanwrap input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:40px}
+.scanwrap:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.scanwrap.busy{opacity:.5;pointer-events:none}
 @media (max-width:520px){.trade .sides{grid-template-columns:1fr}.trade .arrow{transform:rotate(90deg);justify-self:center}}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
 </style>
@@ -145,8 +148,7 @@ a{color:var(--accent)}
   <section data-view="sammlung" class="view">
     <div class="stats" id="stats-top"></div>
     <div class="panel row mine-only" id="scanrow" style="margin-top:16px">
-      <button class="btn primary" type="button" id="scan-btn">📷 Karte scannen</button>
-      <input id="scan-file" type="file" accept="image/*" capture="environment" class="vh" tabindex="-1" aria-hidden="true">
+      <span class="btn primary scanwrap" id="scan-btn">📷 Karte scannen<input id="scan-file" type="file" accept="image/*" aria-label="Karte scannen: Foto aufnehmen oder auswählen"></span>
       <span class="scanout hint" id="scan-out" style="flex:1 1 220px">Fotografier eine Karte, dann werden Name, Set und Nummer automatisch ausgefüllt.</span>
     </div>
     <details class="panel mine-only" id="addbox" style="margin-top:16px">
@@ -358,19 +360,17 @@ $("#setform").addEventListener("submit",e=>{
 });
 
 // ---------- scanning ----------
-$("#scan-btn").addEventListener("click",()=>{
+$("#scan-file").addEventListener("click",e=>{
   const out=$("#scan-out");
-  if(!sample){out.textContent=sampleNote||"Scannen ist hier gerade nicht verfügbar. Öffne die Seite auf claude.ai im Browser oder in der Claude-App.";return}
-  out.textContent="Kamera oder Foto auswählen …";
-  const inp=$("#scan-file");inp.value="";
-  try{inp.showPicker?inp.showPicker():inp.click()}catch(err){inp.click()}
+  if(!sample){e.preventDefault();out.textContent=sampleNote||"Scannen ist hier gerade nicht verfügbar. Öffne die Seite auf claude.ai im Browser.";return}
+  e.target.value="";out.textContent="Kamera oder Foto auswählen … Falls sich nichts öffnet: Öffne die Seite im Browser (Chrome) statt in der App.";
 });
 $("#scan-file").addEventListener("change",async e=>{
   const file=e.target.files[0];const out=$("#scan-out");
   if(!file){out.textContent="Kein Foto ausgewählt.";return}
   if(!sample){out.textContent=sampleNote||"Scannen ist hier gerade nicht verfügbar.";return}
   out.textContent="Karte wird erkannt … (das dauert bis zu einer Minute)";
-  $("#scan-btn").disabled=true;
+  $("#scan-btn").classList.add("busy");
   const prompt=`Auf dem Foto ist eine Pokémon-Sammelkarte (meist deutsch). Lies die Angaben ab und antworte NUR mit einem JSON-Objekt mit diesen Feldern:
 {"name": Kartenname wie gedruckt,
  "setCode": Set-Kürzel unten links (z. B. "DLR", "MEE"),
@@ -392,7 +392,7 @@ Felder, die du nicht sicher lesen kannst, als leeren String "".`;
   }catch(err){
     console.warn("scan",err);
     out.textContent=err&&err.code==="not_granted"?"Scannen wurde nicht erlaubt. Du kannst die Karte von Hand eintragen.":err&&err.code==="rate_limited"?"Gerade zu viele Anfragen. Warte kurz und versuch es noch einmal.":`Das Scannen hat nicht geklappt${err&&err.code?" ("+err.code+")":""}. Versuch es noch einmal oder trag die Karte von Hand ein.`;
-  }finally{$("#scan-btn").disabled=false;e.target.value=""}
+  }finally{$("#scan-btn").classList.remove("busy");e.target.value=""}
 });
 
 // ---------- derived ----------
