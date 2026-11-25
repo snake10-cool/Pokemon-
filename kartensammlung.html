@@ -82,12 +82,23 @@ td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
 .hint{font-size:.82rem;color:var(--muted);margin:0}
 a{color:var(--accent)}
 .confirm{display:flex;gap:6px;align-items:center;font-size:.8rem}
+.who{font-size:.85rem;color:var(--muted);display:flex;gap:8px;align-items:center}
+.who b{color:var(--ink)}
+.login{max-width:420px;margin:48px auto;display:grid;gap:14px}
+.login h2{font-size:1.5rem}
+.pic{aspect-ratio:5/7;max-width:100%;border-radius:8px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;cursor:zoom-in;border:0;padding:0}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.pic span{font-size:.78rem;color:var(--muted);padding:8px;text-align:center}
+.zoom{position:fixed;inset:0;z-index:20;background:rgba(10,12,25,.82);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));cursor:zoom-out}
+.zoom img{max-height:92vh;max-width:100%;border-radius:12px}
+.chip.var{background:var(--accent);color:var(--accent-ink)}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
 </style>
 
 <header class="top"><div class="wrap">
   <h1><span class="ball" aria-hidden="true"></span>Meine Kartensammlung</h1>
-  <nav class="tabs" role="tablist" aria-label="Bereiche">
+  <div class="who" id="who" hidden>Angemeldet als <b id="who-name"></b><button class="btn small" id="logout" type="button">Abmelden</button></div>
+  <nav class="tabs" role="tablist" aria-label="Bereiche" id="tabs" hidden>
     <button role="tab" data-tab="sammlung" id="tab-sammlung">Sammlung</button>
     <button role="tab" data-tab="wert" id="tab-wert">Wert</button>
     <button role="tab" data-tab="deck" id="tab-deck">Deck</button>
@@ -97,7 +108,15 @@ a{color:var(--accent)}
 
 <div class="wrap"><div class="status" id="status">Sammlung wird geladen …</div></div>
 
-<main class="wrap">
+<div class="wrap" id="login-wrap">
+  <form class="panel login" id="loginform">
+    <h2>Anmelden</h2>
+    <p class="hint">Gib deinen Sammlernamen ein. Jeder Name hat seine eigene Sammlung.</p>
+    <label>Sammlername<input id="login-name" autocomplete="username" required placeholder="z. B. Lenox"></label>
+    <button class="btn primary" type="submit">Sammlung öffnen</button>
+  </form>
+</div>
+<main class="wrap" id="app" hidden>
   <!-- SAMMLUNG -->
   <section data-view="sammlung" class="view">
     <div class="stats" id="stats-top"></div>
@@ -106,13 +125,16 @@ a{color:var(--accent)}
       <form class="add" id="addform" style="margin-top:12px">
         <label>Name<input id="f-name" required placeholder="z. B. Glurak ex"></label>
         <label>Set<input id="f-set" list="setlist" placeholder="z. B. Obsidianflammen"></label>
+        <label>Set-Kürzel<input id="f-code" placeholder="z. B. OBF"></label>
         <label>Nummer<input id="f-number" placeholder="125/197"></label>
+        <label>Variante<select id="f-var"><option>Normal</option><option>Reverse Holo</option><option>Holo</option><option>Full Art</option><option>Illustration Rare</option><option>Special Illustration Rare</option><option>Gold / Hyper Rare</option><option>Promo</option><option>Erstauflage / Sonderdruck</option></select></label>
         <label>Kategorie<select id="f-cat"><option>Pokémon</option><option>Trainer</option><option>Energie</option></select></label>
         <label>Typ<select id="f-type"></select></label>
         <label>Seltenheit<select id="f-rarity"></select></label>
         <label>Zustand<select id="f-cond"><option>Near Mint</option><option>Excellent</option><option>Good</option><option>Light Played</option><option>Played</option><option>Poor</option></select></label>
         <label>Anzahl<input id="f-qty" type="number" min="0" value="1"></label>
         <label>Preis pro Karte (€)<input id="f-price" type="number" min="0" step="0.01" placeholder="0,00"></label>
+        <label>Foto der Karte<input id="f-img" type="file" accept="image/*"></label>
         <label style="display:flex;align-items:center;gap:6px;flex-direction:row"><input id="f-want" type="checkbox"> Auf Wunschliste (fehlt mir)</label>
         <button class="btn primary" type="submit" id="f-submit">Hinzufügen</button>
       </form>
@@ -192,33 +214,35 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const eur=n=>(Number(n)||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
 const typeVar=t=>{const f=TYPES.find(x=>x[0]===t);return f&&f[1]?`var(--t-${f[1]})`:"var(--line)"};
 
-let cards=[], sets=[], db=null, canWrite=true;
-let fallback=false;
+let cards=[], sets=[], db=null, canWrite=true, assets=null;
+let fallback=false, me=null, unsubs=[], editingId=null;
+const col=n=>db.collection(`sammler/${me}/${n}`);
+const userKey=n=>n.trim().toLowerCase().normalize("NFKD").replace(/[^a-z0-9_-]/g,"").slice(0,40);
 
 // ---------- storage layer ----------
-function loadLocal(){try{const d=JSON.parse(localStorage.getItem("pkmn-cards")||"{}");cards=d.cards||[];sets=d.sets||[]}catch(e){}}
-function saveLocal(){try{localStorage.setItem("pkmn-cards",JSON.stringify({cards,sets}))}catch(e){}}
+function loadLocal(){try{const d=JSON.parse(localStorage.getItem("pkmn-cards-"+me)||"{}");cards=d.cards||[];sets=d.sets||[]}catch(e){cards=[];sets=[]}}
+function saveLocal(){try{localStorage.setItem("pkmn-cards-"+me,JSON.stringify({cards,sets}))}catch(e){}}
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 
 async function putCard(c){
-  if(db){await db.collection("cards").doc(c.id).set(stripId(c))}
+  if(db){await col("cards").doc(c.id).set(stripId(c))}
   else{const i=cards.findIndex(x=>x.id===c.id);i<0?cards.push(c):cards[i]=c;saveLocal();render()}
 }
 async function delCard(id){
-  if(db){await db.collection("cards").doc(id).delete()}
+  if(db){await col("cards").doc(id).delete()}
   else{cards=cards.filter(c=>c.id!==id);saveLocal();render()}
 }
 async function putSet(s){
-  if(db){await db.collection("sets").doc(s.id).set(stripId(s))}
+  if(db){await col("sets").doc(s.id).set(stripId(s))}
   else{const i=sets.findIndex(x=>x.id===s.id);i<0?sets.push(s):sets[i]=s;saveLocal();render()}
 }
 async function delSet(id){
-  if(db){await db.collection("sets").doc(id).delete()}
+  if(db){await col("sets").doc(id).delete()}
   else{sets=sets.filter(s=>s.id!==id);saveLocal();render()}
 }
 function stripId(o){const {id,...r}=o;return r}
 function status(t,err){const s=$("#status");s.textContent=t;s.classList.toggle("err",!!err)}
-async function safe(fn){try{await fn()}catch(e){status(e&&e.code==="quota_exceeded"?"Speicher voll: lösch ein paar Karten und versuch es erneut.":"Speichern hat nicht geklappt. Versuch es bitte noch einmal.",true)}}
+async function safe(fn){try{await fn()}catch(e){const c=e&&e.code;status(c==="quota_exceeded"?"Speicher voll: lösch ein paar Karten und versuch es erneut.":c==="noassets"?"Fotos hochladen geht hier nicht. Die Karte wurde nicht gespeichert; lass das Foto weg oder öffne die Seite auf claude.ai.":"Speichern hat nicht geklappt. Versuch es bitte noch einmal.",true)}}
 
 // ---------- tabs ----------
 const VIEWS=["sammlung","wert","deck","fehlend"];
@@ -237,16 +261,34 @@ $("#f-rarity").innerHTML=RARITIES.map(r=>`<option>${r}</option>`).join("");
 $("#filter-type").innerHTML+=TYPES.filter(t=>t[1]).map(t=>`<option>${t[0]}</option>`).join("");
 $("#f-cat").addEventListener("change",e=>{if(e.target.value!=="Pokémon")$("#f-type").value= e.target.value==="Energie"?$("#f-type").value:"—"});
 
+const FIELDS={name:"#f-name",set:"#f-set",setCode:"#f-code",number:"#f-number",variant:"#f-var",category:"#f-cat",type:"#f-type",rarity:"#f-rarity",condition:"#f-cond"};
+function resetForm(){
+  editingId=null;$("#f-name").value="";$("#f-number").value="";$("#f-price").value="";$("#f-qty").value="1";$("#f-want").checked=false;$("#f-img").value="";$("#f-var").value="Normal";
+  $("#f-submit").textContent="Hinzufügen";$("#addbox summary h2").textContent="Karte hinzufügen";
+}
+function startEdit(c){
+  editingId=c.id;
+  for(const [k,s] of Object.entries(FIELDS))$(s).value=c[k]??"";
+  $("#f-qty").value=c.qty;$("#f-price").value=c.price||"";$("#f-want").checked=!!c.wanted;$("#f-img").value="";
+  $("#f-submit").textContent="Änderungen speichern";$("#addbox summary h2").textContent=`„${c.name}“ bearbeiten`;
+  $("#addbox").open=true;$("#addbox").scrollIntoView({behavior:"smooth",block:"start"});$("#f-name").focus();
+}
 $("#addform").addEventListener("submit",e=>{
   e.preventDefault();
-  const want=$("#f-want").checked;
-  const c={id:newId(),name:$("#f-name").value.trim(),set:$("#f-set").value.trim(),number:$("#f-number").value.trim(),
-    category:$("#f-cat").value,type:$("#f-type").value,rarity:$("#f-rarity").value,condition:$("#f-cond").value,
-    qty:want?0:Math.max(0,parseInt($("#f-qty").value)||0),price:parseFloat($("#f-price").value)||0,
-    wanted:want,deck:0,createdAt:Date.now()};
+  const want=$("#f-want").checked, old=editingId&&cards.find(x=>x.id===editingId);
+  const c={...(old||{deck:0,createdAt:Date.now()}),id:old?old.id:newId()};
+  for(const [k,s] of Object.entries(FIELDS))c[k]=$(s).value.trim();
+  c.qty=want?0:Math.max(0,parseInt($("#f-qty").value)||0);c.price=parseFloat($("#f-price").value)||0;c.wanted=want;c.deck=Math.min(c.deck||0,c.qty);
   if(!c.name)return;
-  safe(async()=>{await putCard(c);status(`„${c.name}“ gespeichert.`)});
-  $("#f-name").value="";$("#f-number").value="";$("#f-price").value="";$("#f-qty").value="1";$("#f-want").checked=false;$("#f-name").focus();
+  const file=$("#f-img").files[0];
+  $("#f-submit").disabled=true;
+  safe(async()=>{
+    if(file){
+      if(!assets)throw {code:"noassets"};
+      const up=await assets.upload(file);c.img=up.url;c.imgId=up.id;
+    }
+    await putCard(c);status(`„${c.name}“ gespeichert.`);resetForm();
+  }).finally(()=>{$("#f-submit").disabled=false});
 });
 ["#q","#filter-cat","#filter-type","#sort"].forEach(s=>$(s).addEventListener("input",renderCards));
 
@@ -288,10 +330,11 @@ function renderCards(){
   if(!list.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">Keine Karte passt zu deiner Suche.</div>`;return}
   el.innerHTML=list.map(c=>`
     <article class="card" style="--tc:${typeVar(c.type)}" data-id="${esc(c.id)}">
+      <button class="pic" type="button" data-act="zoom" aria-label="Bild von ${esc(c.name)} vergrößern">${c.img&&(/^https:\/\//.test(c.img)||c.img.startsWith("/_blob/"))?`<img src="${esc(c.img)}" alt="${esc(c.name)}" loading="lazy">`:`<span>Kein Foto. Über „Bearbeiten“ kannst du eins hinzufügen.</span>`}</button>
       <h3>${esc(c.name)}</h3>
-      <div class="meta"><span>${esc(c.set||"Ohne Set")}</span>${c.number?`<span class="num">${esc(c.number)}</span>`:""}<span>${esc(c.condition||"")}</span></div>
+      <div class="meta"><span>${esc(c.set||"Ohne Set")}</span>${c.setCode?`<span class="num">${esc(c.setCode)}</span>`:""}${c.number?`<span class="num">${esc(c.number)}</span>`:""}<span>${esc(c.condition||"")}</span></div>
       <div class="chips">
-        <span class="chip">${esc(c.category)}</span>${c.type&&c.type!=="—"?`<span class="chip">${esc(c.type)}</span>`:""}
+        ${c.variant&&c.variant!=="Normal"?`<span class="chip var">${esc(c.variant)}</span>`:""}<span class="chip">${esc(c.category)}</span>${c.type&&c.type!=="—"?`<span class="chip">${esc(c.type)}</span>`:""}
         <span class="chip ${FOIL.has(c.rarity)?"foil":""}">${esc(c.rarity)}</span>
         ${c.wanted?`<span class="chip want">Wunschliste</span>`:""}${c.example?`<span class="chip ex">Beispiel</span>`:""}
       </div>
@@ -299,7 +342,7 @@ function renderCards(){
         <div class="qty"><button class="btn small" data-act="minus" aria-label="Eine weniger">−</button><span>${c.qty}×</span><button class="btn small" data-act="plus" aria-label="Eine mehr">+</button></div>
         <label style="display:flex;flex-direction:row;align-items:center;gap:4px">€<input type="number" min="0" step="0.01" value="${c.price||""}" data-act="price" style="width:80px;padding:4px 6px" aria-label="Preis pro Karte"></label>
       </div>
-      <div class="cardfoot"><a href="${cmLink(c)}" target="_blank" rel="noopener" class="hint">Preis auf Cardmarket</a><span data-del><button class="btn small danger" data-act="del">Löschen</button></span></div>
+      <div class="cardfoot"><a href="${cmLink(c)}" target="_blank" rel="noopener" class="hint">Preis auf Cardmarket</a><span data-del class="row" style="gap:6px"><button class="btn small" data-act="edit">Bearbeiten</button><button class="btn small danger" data-act="del">Löschen</button></span></div>
     </article>`).join("");
 }
 $("#cards").addEventListener("click",e=>{
@@ -310,6 +353,10 @@ $("#cards").addEventListener("click",e=>{
   if(a==="minus"&&c.qty>0)safe(()=>putCard({...c,qty:c.qty-1,deck:Math.min(c.deck||0,c.qty-1)}));
   if(a==="del"){b.parentElement.innerHTML=`<span class="confirm">Wirklich löschen? <button class="btn small danger" data-act="del2">Ja</button><button class="btn small" data-act="no">Nein</button></span>`}
   if(a==="del2")safe(()=>delCard(id));
+  if(a==="edit")startEdit(c);
+  if(a==="zoom"){const img=b.querySelector("img");if(!img){startEdit(c);return}
+    const z=document.createElement("div");z.className="zoom";z.tabIndex=-1;const i=document.createElement("img");i.src=img.src;i.alt=c.name;z.append(i);
+    const close=()=>z.remove();z.addEventListener("click",close);z.addEventListener("keydown",ev=>{if(ev.key==="Escape")close()});document.body.append(z);z.focus()}
   if(a==="no")renderCards();
 });
 $("#cards").addEventListener("change",e=>{
@@ -391,17 +438,39 @@ document.querySelector('[data-view="fehlend"]').addEventListener("click",e=>{
   if(b.dataset.act==="got"){const c=cards.find(x=>x.id===id);if(c)safe(()=>putCard({...c,qty:1,wanted:false}))}
 });
 
-// ---------- boot ----------
-render();
-(async()=>{
-  const timer=setTimeout(()=>{if(!db&&!fallback){status("Gespeicherte Daten sind gerade nicht erreichbar. Du arbeitest lokal in diesem Browser.");}},10000);
-  const d=window.claude?await window.claude.use("db"):null;
-  if(!d){clearTimeout(timer);fallback=true;loadLocal();render();status("Lokaler Modus: Deine Karten werden nur in diesem Browser gespeichert.");return}
-  db=d;
-  try{const u=await window.claude.use("user");const w=u&&await u.can("data.write");if(w===false){canWrite=false;document.querySelectorAll("form button, #addbox").forEach(x=>x.hidden=true)}}catch(e){}
+// ---------- login & boot ----------
+let ready=null;
+function boot(){
+  if(!ready)ready=(async()=>{
+    const d=window.claude?await window.claude.use("db"):null;
+    if(!d){fallback=true;return}
+    db=d;
+    try{assets=await window.claude.use("assets")}catch(e){}
+    try{const u=await window.claude.use("user");const w=u&&await u.can("data.write");if(w===false){canWrite=false;document.querySelectorAll("form#addform button, form#setform button, #addbox").forEach(x=>x.hidden=true)}}catch(e){}
+  })();
+  return ready;
+}
+boot();
+async function login(name){
+  const key=userKey(name);if(!key){status("Bitte gib einen Namen mit Buchstaben oder Zahlen ein.",true);return}
+  me=key;try{localStorage.setItem("pkmn-user",name.trim())}catch(e){}
+  $("#who-name").textContent=name.trim();$("#who").hidden=false;$("#tabs").hidden=false;$("#login-wrap").hidden=true;$("#app").hidden=false;
+  cards=[];sets=[];render();status("Sammlung wird geladen …");
+  await boot();
+  if(!db){loadLocal();render();status("Lokaler Modus: Deine Karten werden nur in diesem Browser gespeichert.");return}
+  const timer=setTimeout(()=>status("Deine Sammlung ist gerade nicht erreichbar. Was du siehst, ist vielleicht nicht aktuell."),10000);
   let gotCards=false,gotSets=false;
-  const done=()=>{if(gotCards&&gotSets){clearTimeout(timer);status(canWrite?"Gespeichert in deiner Sammlung. Änderungen werden sofort übernommen.":"Nur-Lesen: Du kannst diese Sammlung ansehen, aber nicht ändern.")}};
-  db.collection("cards").onSnapshot(s=>{cards=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotCards=true;render();done()},e=>{clearTimeout(timer);status("Die Karten konnten nicht geladen werden.",true)});
-  db.collection("sets").onSnapshot(s=>{sets=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotSets=true;render();done()},e=>{});
-})();
+  const done=()=>{if(gotCards&&gotSets){clearTimeout(timer);status(canWrite?"Gespeichert. Änderungen werden sofort übernommen.":"Nur-Lesen: Du kannst diese Sammlung ansehen, aber nicht ändern.")}};
+  unsubs.push(col("cards").onSnapshot(s=>{cards=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotCards=true;render();done()},e=>{clearTimeout(timer);status("Die Karten konnten nicht geladen werden.",true)}));
+  unsubs.push(col("sets").onSnapshot(s=>{sets=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotSets=true;render();done()},e=>{}));
+}
+function logout(){
+  unsubs.forEach(u=>u());unsubs=[];me=null;cards=[];sets=[];resetForm();
+  try{localStorage.removeItem("pkmn-user")}catch(e){}
+  $("#who").hidden=true;$("#tabs").hidden=true;$("#app").hidden=true;$("#login-wrap").hidden=false;status("Abgemeldet.");$("#login-name").value="";$("#login-name").focus();
+}
+$("#loginform").addEventListener("submit",e=>{e.preventDefault();login($("#login-name").value)});
+$("#logout").addEventListener("click",logout);
+let saved=null;try{saved=localStorage.getItem("pkmn-user")}catch(e){}
+if(saved)login(saved);else status("Melde dich mit deinem Sammlernamen an.");
 </script>
