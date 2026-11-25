@@ -113,6 +113,7 @@ a{color:var(--accent)}
 .qrbox{background:#ffffff;padding:12px;border-radius:12px;width:max-content;max-width:100%}
 .qrbox canvas,.qrbox img{display:block;max-width:100%;height:auto}
 .scanout{font-size:.85rem}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
 @media (max-width:520px){.trade .sides{grid-template-columns:1fr}.trade .arrow{transform:rotate(90deg);justify-self:center}}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
 </style>
@@ -143,13 +144,13 @@ a{color:var(--accent)}
   <!-- SAMMLUNG -->
   <section data-view="sammlung" class="view">
     <div class="stats" id="stats-top"></div>
+    <div class="panel row mine-only" id="scanrow" style="margin-top:16px">
+      <button class="btn primary" type="button" id="scan-btn">📷 Karte scannen</button>
+      <input id="scan-file" type="file" accept="image/*" capture="environment" class="vh" tabindex="-1" aria-hidden="true">
+      <span class="scanout hint" id="scan-out" style="flex:1 1 220px">Fotografier eine Karte, dann werden Name, Set und Nummer automatisch ausgefüllt.</span>
+    </div>
     <details class="panel mine-only" id="addbox" style="margin-top:16px">
       <summary style="cursor:pointer"><h2 style="display:inline">Karte hinzufügen</h2></summary>
-      <div class="row" style="margin-top:12px" id="scanrow" hidden>
-        <label class="btn primary" for="scan-file" style="display:inline-block;color:var(--accent-ink)">📷 Karte scannen</label>
-        <input id="scan-file" type="file" accept="image/*" capture="environment" hidden>
-        <span class="scanout hint" id="scan-out">Fotografier eine Karte, dann werden Name, Set und Nummer automatisch ausgefüllt.</span>
-      </div>
       <form class="add" id="addform" style="margin-top:12px">
         <label>Name<input id="f-name" required placeholder="z. B. Glurak ex"></label>
         <label>Set<input id="f-set" list="setlist" placeholder="z. B. Delta-Herrschaft"></label>
@@ -287,7 +288,7 @@ let myCards=[], mySets=[], otherCards=[], otherSets=[], collectors=[], trades=[]
 let viewing=null, otherUnsubs=[], editingId=null, scanFile=null, canWrite=true;
 let draft={to:null,want:[]};
 const applying=new Set();
-let myLoaded=false;
+let myLoaded=false, sampleNote="";
 const isMine=()=>viewing===me.key;
 const cardsV=()=>isMine()?myCards:otherCards;
 const setsV=()=>isMine()?mySets:otherSets;
@@ -357,9 +358,19 @@ $("#setform").addEventListener("submit",e=>{
 });
 
 // ---------- scanning ----------
+$("#scan-btn").addEventListener("click",()=>{
+  const out=$("#scan-out");
+  if(!sample){out.textContent=sampleNote||"Scannen ist hier gerade nicht verfügbar. Öffne die Seite auf claude.ai im Browser oder in der Claude-App.";return}
+  out.textContent="Kamera oder Foto auswählen …";
+  const inp=$("#scan-file");inp.value="";
+  try{inp.showPicker?inp.showPicker():inp.click()}catch(err){inp.click()}
+});
 $("#scan-file").addEventListener("change",async e=>{
-  const file=e.target.files[0];e.target.value="";if(!file||!sample)return;
-  const out=$("#scan-out");out.textContent="Karte wird erkannt …";
+  const file=e.target.files[0];const out=$("#scan-out");
+  if(!file){out.textContent="Kein Foto ausgewählt.";return}
+  if(!sample){out.textContent=sampleNote||"Scannen ist hier gerade nicht verfügbar.";return}
+  out.textContent="Karte wird erkannt … (das dauert bis zu einer Minute)";
+  $("#scan-btn").disabled=true;
   const prompt=`Auf dem Foto ist eine Pokémon-Sammelkarte (meist deutsch). Lies die Angaben ab und antworte NUR mit einem JSON-Objekt mit diesen Feldern:
 {"name": Kartenname wie gedruckt,
  "setCode": Set-Kürzel unten links (z. B. "DLR", "MEE"),
@@ -379,8 +390,9 @@ Felder, die du nicht sicher lesen kannst, als leeren String "".`;
     scanFile=file;$("#addbox").open=true;
     out.textContent=r&&r.name?`Erkannt: ${r.name} ${r.number||""}. Bitte prüfen und auf „Hinzufügen“ tippen. Das Foto wird mitgespeichert.`:"Ich konnte die Karte nicht lesen. Versuch es mit einem schärferen Foto oder trag sie von Hand ein.";
   }catch(err){
-    out.textContent=err&&err.code==="not_granted"?"Scannen wurde nicht erlaubt. Du kannst die Karte von Hand eintragen.":err&&err.code==="rate_limited"?"Gerade zu viele Anfragen. Warte kurz und versuch es noch einmal.":"Das Scannen hat nicht geklappt. Versuch es noch einmal oder trag die Karte von Hand ein.";
-  }
+    console.warn("scan",err);
+    out.textContent=err&&err.code==="not_granted"?"Scannen wurde nicht erlaubt. Du kannst die Karte von Hand eintragen.":err&&err.code==="rate_limited"?"Gerade zu viele Anfragen. Warte kurz und versuch es noch einmal.":`Das Scannen hat nicht geklappt${err&&err.code?" ("+err.code+")":""}. Versuch es noch einmal oder trag die Karte von Hand ein.`;
+  }finally{$("#scan-btn").disabled=false;e.target.value=""}
 });
 
 // ---------- derived ----------
@@ -625,7 +637,11 @@ async function resolveNames(){
   if(!me.key){canWrite=false;status("Du kannst Sammlungen ansehen. Für eine eigene Sammlung melde dich bei Claude an.")}
   if(w===false&&!owner)canWrite=false;
   c.use("assets").then(a=>{assets=a}).catch(()=>{});
-  c.use("sample").then(async s=>{if(!s)return;const l=await s.limits().catch(()=>null);if(l&&l.images){sample=s;$("#scanrow").hidden=false}}).catch(()=>{});
+  c.use("sample").then(async s=>{
+    if(!s){sampleNote="Scannen ist in dieser Ansicht nicht verfügbar. Öffne die Seite auf claude.ai im Browser oder in der Claude-App.";return}
+    const l=await s.limits().catch(()=>null);
+    if(l&&l.images)sample=s;else sampleNote="Bilder an Claude senden ist hier nicht möglich. Trag die Karte von Hand ein.";
+  }).catch(()=>{sampleNote="Scannen konnte nicht gestartet werden."});
   const timer=setTimeout(()=>status("Die Sammlung ist gerade nicht erreichbar. Was du siehst, ist vielleicht nicht aktuell."),10000);
   db.collection("sammler").onSnapshot(s=>{collectors=s.docs.map(d=>({id:d.id,...d.data()}));resolveNames();if(!viewing&&!me.key&&collectors.length)setView(collectors.find(x=>x.id===OWNER_KEY)?OWNER_KEY:collectors[0].id);render()},()=>{});
   db.collection("trades").onSnapshot(s=>{trades=s.docs.map(d=>({id:d.id,...d.data()}));render();checkTrades()},()=>{});
