@@ -1,0 +1,407 @@
+<title>Meine Kartensammlung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a binder — sticky tab strip on top, one working panel below; cards render as sleeves in a grid. */
+:root{
+  --bg:#f3f4f8; --surface:#ffffff; --sunk:#e8eaf2; --ink:#1b2140; --muted:#5d6385; --line:#d6d9e6;
+  --accent:#2f3fb5; --accent-ink:#ffffff; --foil:#e7b416; --good:#1f8a4c; --warn:#b5541b; --bad:#b42335;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Inter", system-ui, -apple-system, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --t-gras:#3f9a3a; --t-feuer:#d9502b; --t-wasser:#2f86d6; --t-elektro:#e3b310; --t-psycho:#9a4fc4;
+  --t-kampf:#a8642e; --t-finster:#3b3f52; --t-metall:#8a96a6; --t-drache:#a38a2a; --t-farblos:#b9b4a6;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12152a; --surface:#1b1f38; --sunk:#232848; --ink:#e7e9f6; --muted:#a3a8c8; --line:#323862;
+  --accent:#8a98ff; --accent-ink:#10132a; --foil:#f2c94c; --good:#4cc47f; --warn:#e9925a; --bad:#ff6b7d;
+  --t-finster:#8b90ab; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12152a; --surface:#1b1f38; --sunk:#232848; --ink:#e7e9f6; --muted:#a3a8c8; --line:#323862;
+  --accent:#8a98ff; --accent-ink:#10132a; --foil:#f2c94c; --good:#4cc47f; --warn:#e9925a; --bad:#ff6b7d;
+  --t-finster:#8b90ab; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding-block:12px}
+h1{font-family:var(--display);font-weight:800;font-size:1.45rem;margin:0;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+h1 .ball{width:22px;height:22px;border-radius:50%;border:3px solid var(--ink);background:linear-gradient(var(--bad) 0 44%,var(--ink) 44% 56%,var(--surface) 56%);flex:none}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav.tabs button{font:600 .9rem var(--body);border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+nav.tabs button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status{font-size:.82rem;color:var(--muted);padding-block:8px}
+.status.err{color:var(--bad)}
+main{padding-block:8px 48px;display:grid;gap:20px}
+h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0;text-wrap:balance}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat b{display:block;font:800 1.6rem/1.2 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+input,select{font:inherit;color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+label{display:grid;gap:4px;font-size:.8rem;color:var(--muted);font-weight:500}
+.btn{font:600 .9rem var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:4px 9px;font-size:.8rem}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+form.add{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 12px 10px 18px;display:grid;gap:6px;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--tc,var(--line))}
+.card h3{margin:0;font:600 1.02rem/1.3 var(--display);overflow-wrap:anywhere}
+.meta{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.num{font-family:var(--mono);font-size:.78rem}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--ink)}
+.chip.foil{background:var(--foil);color:#2a2000}
+.chip.ex{background:transparent;border:1px dashed var(--muted);color:var(--muted)}
+.chip.want{background:var(--warn);color:#fff}
+.cardfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.qty{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.price{font:600 .95rem var(--mono)}
+.empty{color:var(--muted);text-align:center;padding:28px 12px;border:1px dashed var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.bar{height:10px;background:var(--sunk);border-radius:6px;overflow:hidden;min-width:80px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:6px}
+.bar.ok i{background:var(--good)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.two>*{min-width:0}
+.deckcount{font:800 2.2rem/1 var(--display);font-variant-numeric:tabular-nums}
+.deckcount.ok{color:var(--good)} .deckcount.bad{color:var(--warn)}
+.warnlist{margin:8px 0 0;padding-left:18px;color:var(--warn);font-size:.88rem}
+.hint{font-size:.82rem;color:var(--muted);margin:0}
+a{color:var(--accent)}
+.confirm{display:flex;gap:6px;align-items:center;font-size:.8rem}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
+</style>
+
+<header class="top"><div class="wrap">
+  <h1><span class="ball" aria-hidden="true"></span>Meine Kartensammlung</h1>
+  <nav class="tabs" role="tablist" aria-label="Bereiche">
+    <button role="tab" data-tab="sammlung" id="tab-sammlung">Sammlung</button>
+    <button role="tab" data-tab="wert" id="tab-wert">Wert</button>
+    <button role="tab" data-tab="deck" id="tab-deck">Deck</button>
+    <button role="tab" data-tab="fehlend" id="tab-fehlend">Fehlende Karten</button>
+  </nav>
+</div></header>
+
+<div class="wrap"><div class="status" id="status">Sammlung wird geladen …</div></div>
+
+<main class="wrap">
+  <!-- SAMMLUNG -->
+  <section data-view="sammlung" class="view">
+    <div class="stats" id="stats-top"></div>
+    <details class="panel" id="addbox" style="margin-top:16px" open>
+      <summary style="cursor:pointer"><h2 style="display:inline">Karte hinzufügen</h2></summary>
+      <form class="add" id="addform" style="margin-top:12px">
+        <label>Name<input id="f-name" required placeholder="z. B. Glurak ex"></label>
+        <label>Set<input id="f-set" list="setlist" placeholder="z. B. Obsidianflammen"></label>
+        <label>Nummer<input id="f-number" placeholder="125/197"></label>
+        <label>Kategorie<select id="f-cat"><option>Pokémon</option><option>Trainer</option><option>Energie</option></select></label>
+        <label>Typ<select id="f-type"></select></label>
+        <label>Seltenheit<select id="f-rarity"></select></label>
+        <label>Zustand<select id="f-cond"><option>Near Mint</option><option>Excellent</option><option>Good</option><option>Light Played</option><option>Played</option><option>Poor</option></select></label>
+        <label>Anzahl<input id="f-qty" type="number" min="0" value="1"></label>
+        <label>Preis pro Karte (€)<input id="f-price" type="number" min="0" step="0.01" placeholder="0,00"></label>
+        <label style="display:flex;align-items:center;gap:6px;flex-direction:row"><input id="f-want" type="checkbox"> Auf Wunschliste (fehlt mir)</label>
+        <button class="btn primary" type="submit" id="f-submit">Hinzufügen</button>
+      </form>
+      <datalist id="setlist"></datalist>
+    </details>
+    <div class="row" style="margin:16px 0 12px">
+      <input id="q" type="search" placeholder="Suchen: Name, Set, Nummer …" style="flex:1 1 220px">
+      <select id="filter-cat" aria-label="Kategorie filtern"><option value="">Alle Kategorien</option><option>Pokémon</option><option>Trainer</option><option>Energie</option></select>
+      <select id="filter-type" aria-label="Typ filtern"><option value="">Alle Typen</option></select>
+      <select id="sort" aria-label="Sortieren"><option value="new">Neueste zuerst</option><option value="name">Name A–Z</option><option value="price">Wert (hoch → niedrig)</option><option value="set">Set & Nummer</option></select>
+    </div>
+    <div class="grid" id="cards"></div>
+  </section>
+
+  <!-- WERT -->
+  <section data-view="wert" class="view" hidden>
+    <div class="stats" id="stats-value"></div>
+    <div class="two" style="margin-top:16px">
+      <div class="panel"><h2>Wertvollste Karten</h2><div class="scroll"><table id="top-table"></table></div></div>
+      <div class="panel"><h2>Wert pro Set</h2><div class="scroll"><table id="set-value"></table></div></div>
+    </div>
+    <p class="hint" style="margin-top:12px">Preise trägst du selbst ein. Aktuelle Marktpreise findest du z. B. auf <a href="https://www.cardmarket.com/de/Pokemon" target="_blank" rel="noopener">Cardmarket</a>; bei jeder Karte gibt es einen Link zur passenden Suche.</p>
+  </section>
+
+  <!-- DECK -->
+  <section data-view="deck" class="view" hidden>
+    <div class="two">
+      <div class="panel">
+        <h2>Mein Deck</h2>
+        <div class="row" style="margin:12px 0;gap:20px">
+          <div><div class="deckcount" id="deck-total">0</div><span class="hint">von 60 Karten</span></div>
+          <div class="stats" id="deck-split" style="flex:1"></div>
+        </div>
+        <ul class="warnlist" id="deck-warn"></ul>
+        <div class="scroll"><table id="deck-table"></table></div>
+        <div class="row" style="margin-top:12px"><button class="btn small" id="deck-copy" type="button">Deckliste kopieren</button><button class="btn small danger" id="deck-clear" type="button">Deck leeren</button><span id="deck-msg" class="hint"></span></div>
+      </div>
+      <div class="panel">
+        <h2>Aus deiner Sammlung hinzufügen</h2>
+        <input id="deck-q" type="search" placeholder="Karte suchen …" style="width:100%;margin:12px 0">
+        <div class="scroll"><table id="deck-pool"></table></div>
+        <p class="hint" style="margin-top:8px">Regeln: genau 60 Karten, höchstens 4 Kopien pro Kartenname (Basis-Energie ausgenommen), mindestens ein Basis-Pokémon. Du kannst nur so viele Kopien ins Deck legen, wie du besitzt.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEHLEND -->
+  <section data-view="fehlend" class="view" hidden>
+    <div class="two">
+      <div class="panel">
+        <h2>Set-Fortschritt</h2>
+        <form class="row" id="setform" style="margin:12px 0">
+          <input id="s-name" list="setlist" placeholder="Set-Name" required style="flex:1 1 160px">
+          <input id="s-total" type="number" min="1" placeholder="Karten im Set" required style="width:130px">
+          <button class="btn primary" type="submit">Set speichern</button>
+        </form>
+        <div class="scroll"><table id="set-progress"></table></div>
+        <p class="hint" style="margin-top:8px">Trag ein, wie viele Karten ein Set hat (die Zahl hinter dem Schrägstrich, z. B. 197 bei 125/197). Gezählt werden deine verschiedenen Nummern in diesem Set.</p>
+      </div>
+      <div class="panel">
+        <h2>Wunschliste</h2>
+        <div class="scroll"><table id="want-table"></table></div>
+        <h2 style="margin-top:20px">Fehlende Nummern</h2>
+        <div class="row" style="margin:8px 0"><select id="miss-set" aria-label="Set wählen"></select></div>
+        <p id="miss-list" class="num" style="overflow-wrap:anywhere;margin:0"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const TYPES=[["Pflanze","gras"],["Feuer","feuer"],["Wasser","wasser"],["Elektro","elektro"],["Psycho","psycho"],["Kampf","kampf"],["Finsternis","finster"],["Metall","metall"],["Drache","drache"],["Farblos","farblos"],["—","" ]];
+const RARITIES=["Häufig","Nicht so häufig","Selten","Holo selten","Doppelselten","Ultra selten","Illustration selten","Spezielle Illustration selten","Hyper selten","Promo"];
+const FOIL=new Set(RARITIES.slice(3));
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur=n=>(Number(n)||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+const typeVar=t=>{const f=TYPES.find(x=>x[0]===t);return f&&f[1]?`var(--t-${f[1]})`:"var(--line)"};
+
+let cards=[], sets=[], db=null, canWrite=true;
+let fallback=false;
+
+// ---------- storage layer ----------
+function loadLocal(){try{const d=JSON.parse(localStorage.getItem("pkmn-cards")||"{}");cards=d.cards||[];sets=d.sets||[]}catch(e){}}
+function saveLocal(){try{localStorage.setItem("pkmn-cards",JSON.stringify({cards,sets}))}catch(e){}}
+const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+async function putCard(c){
+  if(db){await db.collection("cards").doc(c.id).set(stripId(c))}
+  else{const i=cards.findIndex(x=>x.id===c.id);i<0?cards.push(c):cards[i]=c;saveLocal();render()}
+}
+async function delCard(id){
+  if(db){await db.collection("cards").doc(id).delete()}
+  else{cards=cards.filter(c=>c.id!==id);saveLocal();render()}
+}
+async function putSet(s){
+  if(db){await db.collection("sets").doc(s.id).set(stripId(s))}
+  else{const i=sets.findIndex(x=>x.id===s.id);i<0?sets.push(s):sets[i]=s;saveLocal();render()}
+}
+async function delSet(id){
+  if(db){await db.collection("sets").doc(id).delete()}
+  else{sets=sets.filter(s=>s.id!==id);saveLocal();render()}
+}
+function stripId(o){const {id,...r}=o;return r}
+function status(t,err){const s=$("#status");s.textContent=t;s.classList.toggle("err",!!err)}
+async function safe(fn){try{await fn()}catch(e){status(e&&e.code==="quota_exceeded"?"Speicher voll: lösch ein paar Karten und versuch es erneut.":"Speichern hat nicht geklappt. Versuch es bitte noch einmal.",true)}}
+
+// ---------- tabs ----------
+const VIEWS=["sammlung","wert","deck","fehlend"];
+function showTab(name){
+  if(!VIEWS.includes(name))name="sammlung";
+  document.querySelectorAll(".view").forEach(v=>v.hidden=v.dataset.view!==name);
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));
+}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{location.hash=b.dataset.tab;showTab(b.dataset.tab)}));
+addEventListener("hashchange",()=>showTab(location.hash.slice(1)));
+showTab(location.hash.slice(1));
+
+// ---------- form setup ----------
+$("#f-type").innerHTML=TYPES.map(t=>`<option>${t[0]}</option>`).join("");
+$("#f-rarity").innerHTML=RARITIES.map(r=>`<option>${r}</option>`).join("");
+$("#filter-type").innerHTML+=TYPES.filter(t=>t[1]).map(t=>`<option>${t[0]}</option>`).join("");
+$("#f-cat").addEventListener("change",e=>{if(e.target.value!=="Pokémon")$("#f-type").value= e.target.value==="Energie"?$("#f-type").value:"—"});
+
+$("#addform").addEventListener("submit",e=>{
+  e.preventDefault();
+  const want=$("#f-want").checked;
+  const c={id:newId(),name:$("#f-name").value.trim(),set:$("#f-set").value.trim(),number:$("#f-number").value.trim(),
+    category:$("#f-cat").value,type:$("#f-type").value,rarity:$("#f-rarity").value,condition:$("#f-cond").value,
+    qty:want?0:Math.max(0,parseInt($("#f-qty").value)||0),price:parseFloat($("#f-price").value)||0,
+    wanted:want,deck:0,createdAt:Date.now()};
+  if(!c.name)return;
+  safe(async()=>{await putCard(c);status(`„${c.name}“ gespeichert.`)});
+  $("#f-name").value="";$("#f-number").value="";$("#f-price").value="";$("#f-qty").value="1";$("#f-want").checked=false;$("#f-name").focus();
+});
+["#q","#filter-cat","#filter-type","#sort"].forEach(s=>$(s).addEventListener("input",renderCards));
+
+$("#setform").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("#s-name").value.trim(), total=parseInt($("#s-total").value)||0;
+  if(!name||!total)return;
+  const ex=sets.find(s=>s.name.toLowerCase()===name.toLowerCase());
+  safe(()=>putSet({id:ex?ex.id:newId(),name,total}));
+  $("#s-name").value="";$("#s-total").value="";
+});
+
+// ---------- derived ----------
+const owned=()=>cards.filter(c=>c.qty>0);
+const totalValue=()=>owned().reduce((a,c)=>a+c.qty*(c.price||0),0);
+const numOf=c=>{const m=String(c.number||"").match(/^\s*0*(\d+)/);return m?parseInt(m[1]):null};
+const cmLink=c=>`https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=${encodeURIComponent(c.name)}`;
+
+// ---------- render ----------
+function render(){
+  $("#setlist").innerHTML=[...new Set([...cards.map(c=>c.set),...sets.map(s=>s.name)].filter(Boolean))].sort().map(s=>`<option value="${esc(s)}">`).join("");
+  const o=owned();
+  $("#stats-top").innerHTML=stat(o.reduce((a,c)=>a+c.qty,0),"Karten insgesamt")+stat(o.length,"Verschiedene Karten")+stat(new Set(o.map(c=>c.set).filter(Boolean)).size,"Sets")+stat(eur(totalValue()),"Gesamtwert");
+  renderCards();renderValue();renderDeck();renderMissing();
+}
+const stat=(v,l)=>`<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+
+function renderCards(){
+  const q=$("#q").value.trim().toLowerCase(), cat=$("#filter-cat").value, ty=$("#filter-type").value, so=$("#sort").value;
+  let list=cards.filter(c=>c.qty>0||c.wanted);
+  if(q)list=list.filter(c=>[c.name,c.set,c.number,c.rarity].join(" ").toLowerCase().includes(q));
+  if(cat)list=list.filter(c=>c.category===cat);
+  if(ty)list=list.filter(c=>c.type===ty);
+  const sorters={new:(a,b)=>(b.createdAt||0)-(a.createdAt||0),name:(a,b)=>a.name.localeCompare(b.name,"de"),
+    price:(a,b)=>(b.price||0)-(a.price||0),set:(a,b)=>(a.set||"").localeCompare(b.set||"","de")||(numOf(a)??1e9)-(numOf(b)??1e9)};
+  list.sort(sorters[so]);
+  const el=$("#cards");
+  if(!cards.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">Noch keine Karten. Trag oben deine erste Karte ein, zum Beispiel „Pikachu“ aus deinem Lieblingsset.</div>`;return}
+  if(!list.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">Keine Karte passt zu deiner Suche.</div>`;return}
+  el.innerHTML=list.map(c=>`
+    <article class="card" style="--tc:${typeVar(c.type)}" data-id="${esc(c.id)}">
+      <h3>${esc(c.name)}</h3>
+      <div class="meta"><span>${esc(c.set||"Ohne Set")}</span>${c.number?`<span class="num">${esc(c.number)}</span>`:""}<span>${esc(c.condition||"")}</span></div>
+      <div class="chips">
+        <span class="chip">${esc(c.category)}</span>${c.type&&c.type!=="—"?`<span class="chip">${esc(c.type)}</span>`:""}
+        <span class="chip ${FOIL.has(c.rarity)?"foil":""}">${esc(c.rarity)}</span>
+        ${c.wanted?`<span class="chip want">Wunschliste</span>`:""}${c.example?`<span class="chip ex">Beispiel</span>`:""}
+      </div>
+      <div class="cardfoot">
+        <div class="qty"><button class="btn small" data-act="minus" aria-label="Eine weniger">−</button><span>${c.qty}×</span><button class="btn small" data-act="plus" aria-label="Eine mehr">+</button></div>
+        <label style="display:flex;flex-direction:row;align-items:center;gap:4px">€<input type="number" min="0" step="0.01" value="${c.price||""}" data-act="price" style="width:80px;padding:4px 6px" aria-label="Preis pro Karte"></label>
+      </div>
+      <div class="cardfoot"><a href="${cmLink(c)}" target="_blank" rel="noopener" class="hint">Preis auf Cardmarket</a><span data-del><button class="btn small danger" data-act="del">Löschen</button></span></div>
+    </article>`).join("");
+}
+$("#cards").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-act]");if(!b)return;
+  const id=b.closest(".card").dataset.id, c=cards.find(x=>x.id===id);if(!c)return;
+  const a=b.dataset.act;
+  if(a==="plus")safe(()=>putCard({...c,qty:c.qty+1,wanted:false}));
+  if(a==="minus"&&c.qty>0)safe(()=>putCard({...c,qty:c.qty-1,deck:Math.min(c.deck||0,c.qty-1)}));
+  if(a==="del"){b.parentElement.innerHTML=`<span class="confirm">Wirklich löschen? <button class="btn small danger" data-act="del2">Ja</button><button class="btn small" data-act="no">Nein</button></span>`}
+  if(a==="del2")safe(()=>delCard(id));
+  if(a==="no")renderCards();
+});
+$("#cards").addEventListener("change",e=>{
+  if(e.target.dataset.act!=="price")return;
+  const id=e.target.closest(".card").dataset.id, c=cards.find(x=>x.id===id);
+  const p=parseFloat(e.target.value)||0; if(c&&p!==c.price)safe(()=>putCard({...c,price:p}));
+});
+
+function renderValue(){
+  const o=owned(), tv=totalValue(), n=o.reduce((a,c)=>a+c.qty,0);
+  const top=[...o].sort((a,b)=>(b.price||0)-(a.price||0))[0];
+  const priced=o.filter(c=>c.price>0).length;
+  $("#stats-value").innerHTML=stat(eur(tv),"Gesamtwert")+stat(eur(n?tv/n:0),"Ø pro Karte")+stat(top&&top.price?eur(top.price):"–","Teuerste Karte")+stat(`${priced}/${o.length}`,"Karten mit Preis");
+  const rows=[...o].filter(c=>c.price>0).sort((a,b)=>b.price*b.qty-a.price*a.qty).slice(0,10);
+  $("#top-table").innerHTML=rows.length?`<tr><th>Karte</th><th class="r">Anz.</th><th class="r">Stück</th><th class="r">Summe</th></tr>`+rows.map(c=>`<tr><td>${esc(c.name)}<div class="hint">${esc(c.set)} <span class="num">${esc(c.number)}</span></div></td><td class="r">${c.qty}</td><td class="r">${eur(c.price)}</td><td class="r"><b>${eur(c.price*c.qty)}</b></td></tr>`).join(""):`<tr><td class="hint">Trag bei deinen Karten Preise ein, dann erscheinen hier die wertvollsten.</td></tr>`;
+  const bySet={};o.forEach(c=>{const k=c.set||"Ohne Set";bySet[k]=(bySet[k]||0)+c.qty*(c.price||0)});
+  const ent=Object.entries(bySet).sort((a,b)=>b[1]-a[1]); const max=Math.max(1,...ent.map(e=>e[1]));
+  $("#set-value").innerHTML=ent.length?ent.map(([s,v])=>`<tr><td>${esc(s)}</td><td style="width:45%"><div class="bar"><i style="width:${(v/max*100).toFixed(1)}%"></i></div></td><td class="r">${eur(v)}</td></tr>`).join(""):`<tr><td class="hint">Noch keine Karten.</td></tr>`;
+}
+
+function isBasicEnergy(c){return c.category==="Energie"&&/^(basis[- ]?)?(pflanzen|feuer|wasser|elektro|psycho|kampf|finsternis|metall|fee)[- ]?energie$/i.test(c.name.trim())}
+function renderDeck(){
+  const inDeck=cards.filter(c=>(c.deck||0)>0);
+  const tot=inDeck.reduce((a,c)=>a+c.deck,0);
+  const el=$("#deck-total");el.textContent=tot;el.className="deckcount "+(tot===60?"ok":tot>0?"bad":"");
+  const by=k=>inDeck.filter(c=>c.category===k).reduce((a,c)=>a+c.deck,0);
+  $("#deck-split").innerHTML=stat(by("Pokémon"),"Pokémon")+stat(by("Trainer"),"Trainer")+stat(by("Energie"),"Energie");
+  const warn=[];
+  if(tot&&tot!==60)warn.push(tot<60?`Es fehlen noch ${60-tot} Karten.`:`${tot-60} Karten zu viel.`);
+  const names={};inDeck.forEach(c=>{if(!isBasicEnergy(c))names[c.name.toLowerCase()]=(names[c.name.toLowerCase()]||0)+c.deck});
+  Object.entries(names).forEach(([n,k])=>{if(k>4){const nm=inDeck.find(c=>c.name.toLowerCase()===n).name;warn.push(`„${nm}“ ist ${k}× drin, erlaubt sind 4.`)}});
+  if(tot&&!by("Pokémon"))warn.push("Dein Deck braucht mindestens ein Basis-Pokémon.");
+  $("#deck-warn").innerHTML=warn.map(w=>`<li>${esc(w)}</li>`).join("");
+  const order={"Pokémon":0,"Trainer":1,"Energie":2};
+  $("#deck-table").innerHTML=inDeck.length?`<tr><th class="r">Anz.</th><th>Karte</th><th></th></tr>`+inDeck.sort((a,b)=>order[a.category]-order[b.category]||a.name.localeCompare(b.name,"de")).map(c=>`<tr data-id="${esc(c.id)}"><td class="r"><b>${c.deck}</b></td><td>${esc(c.name)}<div class="hint">${esc(c.category)} · ${esc(c.set)} <span class="num">${esc(c.number)}</span></div></td><td class="r"><button class="btn small" data-act="dminus" aria-label="Eine aus dem Deck nehmen">−</button></td></tr>`).join(""):`<tr><td class="hint">Dein Deck ist leer. Füge rechts Karten aus deiner Sammlung hinzu.</td></tr>`;
+  renderPool();
+}
+function renderPool(){
+  const q=$("#deck-q").value.trim().toLowerCase();
+  const pool=owned().filter(c=>(c.deck||0)<c.qty&&(!q||[c.name,c.set].join(" ").toLowerCase().includes(q))).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+  $("#deck-pool").innerHTML=pool.length?pool.map(c=>`<tr data-id="${esc(c.id)}"><td>${esc(c.name)}<div class="hint">${esc(c.category)} · frei: ${c.qty-(c.deck||0)}</div></td><td class="r"><button class="btn small primary" data-act="dplus">+ Deck</button></td></tr>`).join(""):`<tr><td class="hint">${owned().length?"Alle passenden Karten liegen schon im Deck.":"Leg zuerst Karten in deiner Sammlung an."}</td></tr>`;
+}
+$("#deck-q").addEventListener("input",renderPool);
+document.querySelector('[data-view="deck"]').addEventListener("click",e=>{
+  const b=e.target.closest("button[data-act]");if(!b)return;
+  const tr=b.closest("tr"), c=tr&&cards.find(x=>x.id===tr.dataset.id);
+  if(b.dataset.act==="dplus"&&c)safe(()=>putCard({...c,deck:(c.deck||0)+1}));
+  if(b.dataset.act==="dminus"&&c)safe(()=>putCard({...c,deck:Math.max(0,(c.deck||0)-1)}));
+});
+$("#deck-clear").addEventListener("click",()=>{
+  const m=$("#deck-msg");
+  if(m.dataset.armed){m.dataset.armed="";m.textContent="";safe(async()=>{for(const c of cards.filter(c=>c.deck>0))await putCard({...c,deck:0})});}
+  else{m.dataset.armed="1";m.textContent="Nochmal klicken zum Bestätigen.";setTimeout(()=>{m.dataset.armed="";m.textContent=""},4000)}
+});
+$("#deck-copy").addEventListener("click",()=>{
+  const inDeck=cards.filter(c=>c.deck>0);
+  const txt=["Pokémon","Trainer","Energie"].map(k=>{const l=inDeck.filter(c=>c.category===k);if(!l.length)return"";return`${k}: ${l.reduce((a,c)=>a+c.deck,0)}\n`+l.map(c=>`${c.deck} ${c.name}${c.set?" "+c.set:""}${c.number?" "+c.number:""}`).join("\n")}).filter(Boolean).join("\n\n");
+  const m=$("#deck-msg");
+  navigator.clipboard.writeText(txt).then(()=>m.textContent="Deckliste kopiert.",()=>m.textContent="Kopieren nicht möglich.");
+});
+
+function renderMissing(){
+  const prog=sets.map(s=>{const have=new Set(owned().filter(c=>c.set.toLowerCase()===s.name.toLowerCase()).map(numOf).filter(n=>n&&n<=s.total));return{...s,have:have.size,nums:have}}).sort((a,b)=>b.have/b.total-a.have/a.total);
+  $("#set-progress").innerHTML=prog.length?`<tr><th>Set</th><th>Fortschritt</th><th class="r">Karten</th><th></th></tr>`+prog.map(s=>`<tr data-id="${esc(s.id)}"><td>${esc(s.name)}</td><td style="width:40%"><div class="bar ${s.have>=s.total?"ok":""}"><i style="width:${Math.min(100,s.have/s.total*100).toFixed(1)}%"></i></div></td><td class="r num">${s.have}/${s.total}</td><td class="r"><button class="btn small danger" data-act="sdel" aria-label="Set entfernen">×</button></td></tr>`).join(""):`<tr><td class="hint">Noch kein Set angelegt. Trag oben ein Set und seine Kartenzahl ein.</td></tr>`;
+  const wants=cards.filter(c=>c.wanted&&c.qty===0);
+  $("#want-table").innerHTML=wants.length?wants.map(c=>`<tr data-id="${esc(c.id)}"><td>${esc(c.name)}<div class="hint">${esc(c.set)} <span class="num">${esc(c.number)}</span>${c.price?` · ca. ${eur(c.price)}`:""}</div></td><td class="r"><button class="btn small primary" data-act="got">Hab ich jetzt</button></td></tr>`).join("")+`<tr><td class="hint">Summe ca. ${eur(wants.reduce((a,c)=>a+(c.price||0),0))}</td><td></td></tr>`:`<tr><td class="hint">Deine Wunschliste ist leer. Setz beim Hinzufügen das Häkchen „Auf Wunschliste“.</td></tr>`;
+  const sel=$("#miss-set"), cur=sel.value;
+  sel.innerHTML=prog.length?prog.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join(""):`<option value="">Kein Set angelegt</option>`;
+  if(prog.some(s=>s.id===cur))sel.value=cur;
+  const s=prog.find(x=>x.id===sel.value);
+  if(!s){$("#miss-list").textContent="";return}
+  const miss=[];for(let i=1;i<=s.total;i++)if(!s.nums.has(i))miss.push(i);
+  $("#miss-list").textContent=miss.length?`${miss.length} fehlen: `+miss.join(", "):"Set komplett!";
+}
+$("#miss-set").addEventListener("change",renderMissing);
+document.querySelector('[data-view="fehlend"]').addEventListener("click",e=>{
+  const b=e.target.closest("button[data-act]");if(!b)return;const id=b.closest("tr").dataset.id;
+  if(b.dataset.act==="sdel")safe(()=>delSet(id));
+  if(b.dataset.act==="got"){const c=cards.find(x=>x.id===id);if(c)safe(()=>putCard({...c,qty:1,wanted:false}))}
+});
+
+// ---------- boot ----------
+render();
+(async()=>{
+  const timer=setTimeout(()=>{if(!db&&!fallback){status("Gespeicherte Daten sind gerade nicht erreichbar. Du arbeitest lokal in diesem Browser.");}},10000);
+  const d=window.claude?await window.claude.use("db"):null;
+  if(!d){clearTimeout(timer);fallback=true;loadLocal();render();status("Lokaler Modus: Deine Karten werden nur in diesem Browser gespeichert.");return}
+  db=d;
+  try{const u=await window.claude.use("user");const w=u&&await u.can("data.write");if(w===false){canWrite=false;document.querySelectorAll("form button, #addbox").forEach(x=>x.hidden=true)}}catch(e){}
+  let gotCards=false,gotSets=false;
+  const done=()=>{if(gotCards&&gotSets){clearTimeout(timer);status(canWrite?"Gespeichert in deiner Sammlung. Änderungen werden sofort übernommen.":"Nur-Lesen: Du kannst diese Sammlung ansehen, aber nicht ändern.")}};
+  db.collection("cards").onSnapshot(s=>{cards=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotCards=true;render();done()},e=>{clearTimeout(timer);status("Die Karten konnten nicht geladen werden.",true)});
+  db.collection("sets").onSnapshot(s=>{sets=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotSets=true;render();done()},e=>{});
+})();
+</script>
