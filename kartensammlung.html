@@ -30,41 +30,47 @@ header.top{background:var(--surface);border-bottom:1px solid var(--line);positio
 h1{font-family:var(--display);font-weight:800;font-size:1.45rem;margin:0;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
 h1 .ball{width:22px;height:22px;border-radius:50%;border:3px solid var(--ink);background:linear-gradient(var(--bad) 0 44%,var(--ink) 44% 56%,var(--surface) 56%);flex:none}
 nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
-nav.tabs button{font:600 .9rem var(--body);border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer}
+nav.tabs button{font:600 .9rem var(--body);border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;position:relative}
 nav.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
-nav.tabs button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font-size:.7rem;margin-left:4px}
+nav.tabs button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .status{font-size:.82rem;color:var(--muted);padding-block:8px}
 .status.err{color:var(--bad)}
 main{padding-block:8px 48px;display:grid;gap:20px}
 h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0;text-wrap:balance}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+h3.sub{font:600 1rem var(--display);margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .stat b{display:block;font:800 1.6rem/1.2 var(--display);font-variant-numeric:tabular-nums}
 .stat span{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-input,select{font:inherit;color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
 label{display:grid;gap:4px;font-size:.8rem;color:var(--muted);font-weight:500}
 .btn{font:600 .9rem var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.small{padding:4px 9px;font-size:.8rem}
 .btn.danger{color:var(--bad)}
+.btn.on{background:var(--warn);border-color:var(--warn);color:#fff}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 form.add{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 12px 10px 18px;display:grid;gap:6px;overflow:hidden}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 12px 10px 18px;display:grid;gap:6px;overflow:hidden;grid-template-columns:84px minmax(0,1fr);column-gap:12px;align-content:start}
 .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--tc,var(--line))}
+.card>*:not(.pic){grid-column:2}
 .card h3{margin:0;font:600 1.02rem/1.3 var(--display);overflow-wrap:anywhere}
+.pic{grid-column:1;grid-row:1 / span 6;align-self:start;width:84px;aspect-ratio:5/7;border-radius:6px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;cursor:zoom-in;border:0;padding:0}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.pic span{font-size:.66rem;line-height:1.25;color:var(--muted);padding:4px;text-align:center}
 .meta{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
 .num{font-family:var(--mono);font-size:.78rem}
 .chips{display:flex;flex-wrap:wrap;gap:4px}
 .chip{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--ink)}
 .chip.foil{background:var(--foil);color:#2a2000}
-.chip.ex{background:transparent;border:1px dashed var(--muted);color:var(--muted)}
+.chip.var{background:var(--accent);color:var(--accent-ink)}
 .chip.want{background:var(--warn);color:#fff}
-.cardfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.cardfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .qty{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
-.price{font:600 .95rem var(--mono)}
 .empty{color:var(--muted);text-align:center;padding:28px 12px;border:1px dashed var(--line);border-radius:12px}
 table{width:100%;border-collapse:collapse;font-size:.9rem}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
@@ -74,7 +80,7 @@ td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
 .bar{height:10px;background:var(--sunk);border-radius:6px;overflow:hidden;min-width:80px}
 .bar i{display:block;height:100%;background:var(--accent);border-radius:6px}
 .bar.ok i{background:var(--good)}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
 .two>*{min-width:0}
 .deckcount{font:800 2.2rem/1 var(--display);font-variant-numeric:tabular-nums}
 .deckcount.ok{color:var(--good)} .deckcount.bad{color:var(--warn)}
@@ -82,54 +88,73 @@ td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
 .hint{font-size:.82rem;color:var(--muted);margin:0}
 a{color:var(--accent)}
 .confirm{display:flex;gap:6px;align-items:center;font-size:.8rem}
-.who{font-size:.85rem;color:var(--muted);display:flex;gap:8px;align-items:center}
-.who b{color:var(--ink)}
-.login{max-width:420px;margin:48px auto;display:grid;gap:14px}
-.login h2{font-size:1.5rem}
-.card{grid-template-columns:84px minmax(0,1fr);column-gap:12px;align-content:start}
-.card>*:not(.pic){grid-column:2}
-.pic{grid-column:1;grid-row:1 / span 6;align-self:start;width:84px;aspect-ratio:5/7;border-radius:6px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;cursor:zoom-in;border:0;padding:0}
-.pic img{width:100%;height:100%;object-fit:cover;display:block}
-.pic span{font-size:.66rem;line-height:1.25;color:var(--muted);padding:4px;text-align:center}
-.grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 .zoom{position:fixed;inset:0;z-index:20;background:rgba(10,12,25,.82);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));cursor:zoom-out}
 .zoom img{max-height:92vh;max-width:100%;border-radius:12px}
-.chip.var{background:var(--accent);color:var(--accent-ink)}
+.viewbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--sunk);border-radius:12px;padding:10px 14px}
+.viewbar.other{background:var(--accent);color:var(--accent-ink)}
+.viewbar.other .btn{border-color:transparent}
+.people{display:grid;gap:8px}
+.person{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;flex-wrap:wrap}
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:800 1rem var(--display);background:var(--sunk);color:var(--ink);flex:none}
+.person .grow{flex:1;min-width:120px}
+.rank{font:800 1.1rem var(--display);width:28px;text-align:center;color:var(--muted)}
+.trade{border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:8px}
+.trade .sides{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start}
+.trade .arrow{font:800 1.3rem var(--display);color:var(--muted);align-self:center}
+.mini{display:flex;flex-wrap:wrap;gap:6px}
+.mini figure{margin:0;width:64px;display:grid;gap:2px;font-size:.68rem;color:var(--muted);text-align:center}
+.mini img,.mini .ph{width:64px;aspect-ratio:5/7;border-radius:4px;object-fit:cover;background:var(--sunk);display:block}
+.pill{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--sunk)}
+.pill.offen{background:var(--foil);color:#2a2000}
+.pill.angenommen{background:var(--good);color:#fff}
+.pill.abgelehnt,.pill.zurückgezogen{background:var(--line);color:var(--muted)}
+.offerlist{display:grid;gap:6px;max-height:260px;overflow:auto;padding:4px}
+.offerlist label{display:flex;flex-direction:row;align-items:center;gap:8px;font-size:.88rem;color:var(--ink)}
+.qrbox{background:#ffffff;padding:12px;border-radius:12px;width:max-content;max-width:100%}
+.qrbox canvas,.qrbox img{display:block;max-width:100%;height:auto}
+.scanout{font-size:.85rem}
+@media (max-width:520px){.trade .sides{grid-template-columns:1fr}.trade .arrow{transform:rotate(90deg);justify-self:center}}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--accent)}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <header class="top"><div class="wrap">
   <h1><span class="ball" aria-hidden="true"></span>Meine Kartensammlung</h1>
-  <div class="who" id="who" hidden>Angemeldet als <b id="who-name"></b><button class="btn small" id="logout" type="button">Abmelden</button></div>
-  <nav class="tabs" role="tablist" aria-label="Bereiche" id="tabs" hidden>
-    <button role="tab" data-tab="sammlung" id="tab-sammlung">Sammlung</button>
-    <button role="tab" data-tab="wert" id="tab-wert">Wert</button>
-    <button role="tab" data-tab="deck" id="tab-deck">Deck</button>
-    <button role="tab" data-tab="fehlend" id="tab-fehlend">Fehlende Karten</button>
+  <nav class="tabs" role="tablist" aria-label="Bereiche">
+    <button role="tab" data-tab="sammlung">Sammlung</button>
+    <button role="tab" data-tab="wert">Wert</button>
+    <button role="tab" data-tab="deck">Deck</button>
+    <button role="tab" data-tab="fehlend">Fehlende Karten</button>
+    <button role="tab" data-tab="freunde">Freunde & Tausch<span class="badge" id="trade-badge" hidden></span></button>
   </nav>
 </div></header>
 
 <div class="wrap"><div class="status" id="status">Sammlung wird geladen …</div></div>
 
-<div class="wrap" id="login-wrap">
-  <form class="panel login" id="loginform">
-    <h2>Anmelden</h2>
-    <p class="hint">Gib deinen Sammlernamen ein. Jeder Name hat seine eigene Sammlung.</p>
-    <label>Sammlername<input id="login-name" autocomplete="username" required placeholder="z. B. Lenox"></label>
-    <button class="btn primary" type="submit">Sammlung öffnen</button>
-  </form>
-</div>
-<main class="wrap" id="app" hidden>
+<main class="wrap">
+  <div class="viewbar" id="viewbar">
+    <span id="viewlabel">Deine Sammlung</span>
+    <span class="row" style="gap:8px">
+      <label for="viewsel" style="color:inherit">Sammlung von</label>
+      <select id="viewsel" aria-label="Sammlung wählen"></select>
+    </span>
+  </div>
+
   <!-- SAMMLUNG -->
   <section data-view="sammlung" class="view">
     <div class="stats" id="stats-top"></div>
-    <details class="panel" id="addbox" style="margin-top:16px" open>
+    <details class="panel mine-only" id="addbox" style="margin-top:16px">
       <summary style="cursor:pointer"><h2 style="display:inline">Karte hinzufügen</h2></summary>
+      <div class="row" style="margin-top:12px" id="scanrow" hidden>
+        <label class="btn primary" for="scan-file" style="display:inline-block;color:var(--accent-ink)">📷 Karte scannen</label>
+        <input id="scan-file" type="file" accept="image/*" capture="environment" hidden>
+        <span class="scanout hint" id="scan-out">Fotografier eine Karte, dann werden Name, Set und Nummer automatisch ausgefüllt.</span>
+      </div>
       <form class="add" id="addform" style="margin-top:12px">
         <label>Name<input id="f-name" required placeholder="z. B. Glurak ex"></label>
-        <label>Set<input id="f-set" list="setlist" placeholder="z. B. Obsidianflammen"></label>
-        <label>Set-Kürzel<input id="f-code" placeholder="z. B. OBF"></label>
-        <label>Nummer<input id="f-number" placeholder="125/197"></label>
+        <label>Set<input id="f-set" list="setlist" placeholder="z. B. Delta-Herrschaft"></label>
+        <label>Set-Kürzel<input id="f-code" placeholder="z. B. DLR"></label>
+        <label>Nummer<input id="f-number" placeholder="085/103"></label>
         <label>Variante<select id="f-var"><option>Normal</option><option>Reverse Holo</option><option>Holo</option><option>Full Art</option><option>Illustration Rare</option><option>Special Illustration Rare</option><option>Gold / Hyper Rare</option><option>Promo</option><option>Erstauflage / Sonderdruck</option></select></label>
         <label>Kategorie<select id="f-cat"><option>Pokémon</option><option>Trainer</option><option>Energie</option></select></label>
         <label>Typ<select id="f-type"></select></label>
@@ -139,10 +164,19 @@ a{color:var(--accent)}
         <label>Preis pro Karte (€)<input id="f-price" type="number" min="0" step="0.01" placeholder="0,00"></label>
         <label>Foto der Karte<input id="f-img" type="file" accept="image/*"></label>
         <label style="display:flex;align-items:center;gap:6px;flex-direction:row"><input id="f-want" type="checkbox"> Auf Wunschliste (fehlt mir)</label>
-        <button class="btn primary" type="submit" id="f-submit">Hinzufügen</button>
+        <div class="row"><button class="btn primary" type="submit" id="f-submit">Hinzufügen</button><button class="btn" type="button" id="f-cancel" hidden>Abbrechen</button></div>
       </form>
       <datalist id="setlist"></datalist>
     </details>
+    <div class="panel" id="tradedraft" style="margin-top:16px" hidden>
+      <h2>Tausch vorschlagen</h2>
+      <div class="two" style="margin-top:12px">
+        <div><h3 class="sub">Du möchtest</h3><div class="mini" id="draft-want" style="margin-top:8px"></div></div>
+        <div><h3 class="sub">Du bietest dafür</h3><div class="offerlist" id="draft-offer" style="margin-top:8px"></div></div>
+      </div>
+      <label style="margin-top:12px">Nachricht (optional)<input id="draft-msg" maxlength="200" placeholder="z. B. Tauschen wir am Freitag?"></label>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="draft-send" type="button">Tausch senden</button><button class="btn" id="draft-clear" type="button">Verwerfen</button><span class="hint" id="draft-msgout"></span></div>
+    </div>
     <div class="row" style="margin:16px 0 12px">
       <input id="q" type="search" placeholder="Suchen: Name, Set, Nummer …" style="flex:1 1 220px">
       <select id="filter-cat" aria-label="Kategorie filtern"><option value="">Alle Kategorien</option><option>Pokémon</option><option>Trainer</option><option>Energie</option></select>
@@ -159,27 +193,27 @@ a{color:var(--accent)}
       <div class="panel"><h2>Wertvollste Karten</h2><div class="scroll"><table id="top-table"></table></div></div>
       <div class="panel"><h2>Wert pro Set</h2><div class="scroll"><table id="set-value"></table></div></div>
     </div>
-    <p class="hint" style="margin-top:12px">Preise trägst du selbst ein. Aktuelle Marktpreise findest du z. B. auf <a href="https://www.cardmarket.com/de/Pokemon" target="_blank" rel="noopener">Cardmarket</a>; bei jeder Karte gibt es einen Link zur passenden Suche.</p>
+    <p class="hint" style="margin-top:12px">Preise: Cardmarket-Trend, von Claude eingetragen. Für neue Preise sag Claude „Preise aktualisieren“.</p>
   </section>
 
   <!-- DECK -->
   <section data-view="deck" class="view" hidden>
     <div class="two">
       <div class="panel">
-        <h2>Mein Deck</h2>
+        <h2>Deck</h2>
         <div class="row" style="margin:12px 0;gap:20px">
           <div><div class="deckcount" id="deck-total">0</div><span class="hint">von 60 Karten</span></div>
           <div class="stats" id="deck-split" style="flex:1"></div>
         </div>
         <ul class="warnlist" id="deck-warn"></ul>
         <div class="scroll"><table id="deck-table"></table></div>
-        <div class="row" style="margin-top:12px"><button class="btn small" id="deck-copy" type="button">Deckliste kopieren</button><button class="btn small danger" id="deck-clear" type="button">Deck leeren</button><span id="deck-msg" class="hint"></span></div>
+        <div class="row" style="margin-top:12px"><button class="btn small" id="deck-copy" type="button">Deckliste kopieren</button><button class="btn small danger mine-only" id="deck-clear" type="button">Deck leeren</button><span id="deck-msg" class="hint"></span></div>
       </div>
-      <div class="panel">
+      <div class="panel mine-only">
         <h2>Aus deiner Sammlung hinzufügen</h2>
         <input id="deck-q" type="search" placeholder="Karte suchen …" style="width:100%;margin:12px 0">
         <div class="scroll"><table id="deck-pool"></table></div>
-        <p class="hint" style="margin-top:8px">Regeln: genau 60 Karten, höchstens 4 Kopien pro Kartenname (Basis-Energie ausgenommen), mindestens ein Basis-Pokémon. Du kannst nur so viele Kopien ins Deck legen, wie du besitzt.</p>
+        <p class="hint" style="margin-top:8px">Regeln: genau 60 Karten, höchstens 4 Kopien pro Kartenname (Basis-Energie ausgenommen), mindestens ein Basis-Pokémon.</p>
       </div>
     </div>
   </section>
@@ -189,13 +223,12 @@ a{color:var(--accent)}
     <div class="two">
       <div class="panel">
         <h2>Set-Fortschritt</h2>
-        <form class="row" id="setform" style="margin:12px 0">
+        <form class="row mine-only" id="setform" style="margin:12px 0">
           <input id="s-name" list="setlist" placeholder="Set-Name" required style="flex:1 1 160px">
           <input id="s-total" type="number" min="1" placeholder="Karten im Set" required style="width:130px">
           <button class="btn primary" type="submit">Set speichern</button>
         </form>
         <div class="scroll"><table id="set-progress"></table></div>
-        <p class="hint" style="margin-top:8px">Trag ein, wie viele Karten ein Set hat (die Zahl hinter dem Schrägstrich, z. B. 197 bei 125/197). Gezählt werden deine verschiedenen Nummern in diesem Set.</p>
       </div>
       <div class="panel">
         <h2>Wunschliste</h2>
@@ -206,275 +239,401 @@ a{color:var(--accent)}
       </div>
     </div>
   </section>
+
+  <!-- FREUNDE -->
+  <section data-view="freunde" class="view" hidden>
+    <div class="two">
+      <div class="panel">
+        <h2>Tauschanfragen</h2>
+        <div id="trades" style="display:grid;gap:10px;margin-top:12px"></div>
+      </div>
+      <div class="panel">
+        <h2>Rangliste</h2>
+        <p class="hint" style="margin:4px 0 12px">Alle Sammler auf dieser Seite, sortiert nach Sammlungswert.</p>
+        <div class="people" id="people"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Freunde einladen</h2>
+      <div class="row" style="margin-top:12px;align-items:flex-start;gap:20px">
+        <div class="qrbox" id="qr" aria-label="QR-Code zur Kartensammlung"></div>
+        <div style="flex:1 1 260px;display:grid;gap:10px;min-width:0">
+          <p class="hint">Freunde scannen den QR-Code mit der Handykamera oder öffnen den Link. Jeder bekommt automatisch seine eigene Sammlung und kann deine ansehen und Tausch vorschlagen.</p>
+          <div class="row"><input id="share-link" readonly style="flex:1 1 220px" aria-label="Link zur Seite"><button class="btn primary" id="share-copy" type="button">Link kopieren</button></div>
+          <span class="hint" id="share-msg"></span>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>
-const TYPES=[["Pflanze","gras"],["Feuer","feuer"],["Wasser","wasser"],["Elektro","elektro"],["Psycho","psycho"],["Kampf","kampf"],["Finsternis","finster"],["Metall","metall"],["Drache","drache"],["Farblos","farblos"],["—","" ]];
+const SHARE_URL="https://claude.ai/artifact/MEyedXbzQu2TbZ5QtpmNbd";
+const OWNER_KEY="lenox";
+const TYPES=[["Pflanze","gras"],["Feuer","feuer"],["Wasser","wasser"],["Elektro","elektro"],["Psycho","psycho"],["Kampf","kampf"],["Finsternis","finster"],["Metall","metall"],["Drache","drache"],["Farblos","farblos"],["—",""]];
 const RARITIES=["Häufig","Nicht so häufig","Selten","Holo selten","Doppelselten","Ultra selten","Illustration selten","Spezielle Illustration selten","Hyper selten","Promo"];
 const FOIL=new Set(RARITIES.slice(3));
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const eur=n=>(Number(n)||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
 const typeVar=t=>{const f=TYPES.find(x=>x[0]===t);return f&&f[1]?`var(--t-${f[1]})`:"var(--line)"};
-
-let cards=[], sets=[], db=null, canWrite=true, assets=null;
-let fallback=false, me=null, unsubs=[], editingId=null;
-const col=n=>db.collection(`sammler/${me}/${n}`);
-const userKey=n=>n.trim().toLowerCase().normalize("NFKD").replace(/[^a-z0-9_-]/g,"").slice(0,40);
-
-// ---------- storage layer ----------
-function loadLocal(){try{const d=JSON.parse(localStorage.getItem("pkmn-cards-"+me)||"{}");cards=d.cards||[];sets=d.sets||[]}catch(e){cards=[];sets=[]}}
-function saveLocal(){try{localStorage.setItem("pkmn-cards-"+me,JSON.stringify({cards,sets}))}catch(e){}}
+const safeImg=u=>typeof u==="string"&&(u.startsWith("/_blob/")||/^https:\/\//.test(u))?u:"";
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 
-async function putCard(c){
-  if(db){await col("cards").doc(c.id).set(stripId(c))}
-  else{const i=cards.findIndex(x=>x.id===c.id);i<0?cards.push(c):cards[i]=c;saveLocal();render()}
-}
-async function delCard(id){
-  if(db){await col("cards").doc(id).delete()}
-  else{cards=cards.filter(c=>c.id!==id);saveLocal();render()}
-}
-async function putSet(s){
-  if(db){await col("sets").doc(s.id).set(stripId(s))}
-  else{const i=sets.findIndex(x=>x.id===s.id);i<0?sets.push(s):sets[i]=s;saveLocal();render()}
-}
-async function delSet(id){
-  if(db){await col("sets").doc(id).delete()}
-  else{sets=sets.filter(s=>s.id!==id);saveLocal();render()}
-}
-function stripId(o){const {id,...r}=o;return r}
+// ---------- state ----------
+let db=null, user=null, assets=null, sample=null;
+let me={key:null,uid:null,owner:false};
+let myCards=[], mySets=[], otherCards=[], otherSets=[], collectors=[], trades=[], names={};
+let viewing=null, otherUnsubs=[], editingId=null, scanFile=null, canWrite=true;
+let draft={to:null,want:[]};
+const applying=new Set();
+let myLoaded=false;
+const isMine=()=>viewing===me.key;
+const cardsV=()=>isMine()?myCards:otherCards;
+const setsV=()=>isMine()?mySets:otherSets;
+const col=(key,n)=>db.collection(`sammler/${key}/${n}`);
 function status(t,err){const s=$("#status");s.textContent=t;s.classList.toggle("err",!!err)}
-async function safe(fn){try{await fn()}catch(e){const c=e&&e.code;status(c==="quota_exceeded"?"Speicher voll: lösch ein paar Karten und versuch es erneut.":c==="noassets"?"Fotos hochladen geht hier nicht. Die Karte wurde nicht gespeichert; lass das Foto weg oder öffne die Seite auf claude.ai.":"Speichern hat nicht geklappt. Versuch es bitte noch einmal.",true)}}
+function errText(e){const c=e&&e.code;return c==="quota_exceeded"?"Speicher voll: lösch ein paar Karten und versuch es erneut.":c==="noassets"?"Fotos hochladen ist für dich hier nicht möglich. Speichere die Karte ohne Foto.":c==="invalid_argument"?"Du darfst hier nichts ändern. Bitte Lenox, dich als Bearbeiter einzuladen.":"Speichern hat nicht geklappt. Versuch es bitte noch einmal."}
+async function safe(fn){try{await fn()}catch(e){status(errText(e),true)}}
+const nameOf=key=>{if(key===OWNER_KEY)return "Lenox";const p=collectors.find(c=>c.id===key);return (p&&names[p.uid])||"Sammler"};
+
+// ---------- writes (own collection only) ----------
+const stripId=o=>{const {id,...r}=o;return r};
+async function putCard(c){await col(me.key,"cards").doc(c.id).set(stripId(c))}
+async function delCard(id){await col(me.key,"cards").doc(id).delete()}
+async function putSet(s){await col(me.key,"sets").doc(s.id).set(stripId(s))}
+async function delSet(id){await col(me.key,"sets").doc(id).delete()}
 
 // ---------- tabs ----------
-const VIEWS=["sammlung","wert","deck","fehlend"];
+const VIEWS=["sammlung","wert","deck","fehlend","freunde"];
 function showTab(name){
   if(!VIEWS.includes(name))name="sammlung";
   document.querySelectorAll(".view").forEach(v=>v.hidden=v.dataset.view!==name);
   document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));
+  $("#viewbar").hidden=name==="freunde";
 }
 document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{location.hash=b.dataset.tab;showTab(b.dataset.tab)}));
 addEventListener("hashchange",()=>showTab(location.hash.slice(1)));
 showTab(location.hash.slice(1));
 
-// ---------- form setup ----------
+// ---------- form ----------
 $("#f-type").innerHTML=TYPES.map(t=>`<option>${t[0]}</option>`).join("");
 $("#f-rarity").innerHTML=RARITIES.map(r=>`<option>${r}</option>`).join("");
 $("#filter-type").innerHTML+=TYPES.filter(t=>t[1]).map(t=>`<option>${t[0]}</option>`).join("");
-$("#f-cat").addEventListener("change",e=>{if(e.target.value!=="Pokémon")$("#f-type").value= e.target.value==="Energie"?$("#f-type").value:"—"});
-
 const FIELDS={name:"#f-name",set:"#f-set",setCode:"#f-code",number:"#f-number",variant:"#f-var",category:"#f-cat",type:"#f-type",rarity:"#f-rarity",condition:"#f-cond"};
 function resetForm(){
-  editingId=null;$("#f-name").value="";$("#f-number").value="";$("#f-price").value="";$("#f-qty").value="1";$("#f-want").checked=false;$("#f-img").value="";$("#f-var").value="Normal";
-  $("#f-submit").textContent="Hinzufügen";$("#addbox summary h2").textContent="Karte hinzufügen";
+  editingId=null;scanFile=null;$("#addform").reset();$("#f-qty").value="1";
+  $("#f-submit").textContent="Hinzufügen";$("#f-cancel").hidden=true;$("#addbox summary h2").textContent="Karte hinzufügen";
 }
 function startEdit(c){
-  editingId=c.id;
+  editingId=c.id;scanFile=null;
   for(const [k,s] of Object.entries(FIELDS))$(s).value=c[k]??"";
   $("#f-qty").value=c.qty;$("#f-price").value=c.price||"";$("#f-want").checked=!!c.wanted;$("#f-img").value="";
-  $("#f-submit").textContent="Änderungen speichern";$("#addbox summary h2").textContent=`„${c.name}“ bearbeiten`;
+  $("#f-submit").textContent="Änderungen speichern";$("#f-cancel").hidden=false;$("#addbox summary h2").textContent=`„${c.name}“ bearbeiten`;
   $("#addbox").open=true;$("#addbox").scrollIntoView({behavior:"smooth",block:"start"});$("#f-name").focus();
 }
+$("#f-cancel").addEventListener("click",resetForm);
 $("#addform").addEventListener("submit",e=>{
-  e.preventDefault();
-  const want=$("#f-want").checked, old=editingId&&cards.find(x=>x.id===editingId);
+  e.preventDefault();if(!isMine())return;
+  const want=$("#f-want").checked, old=editingId&&myCards.find(x=>x.id===editingId);
   const c={...(old||{deck:0,createdAt:Date.now()}),id:old?old.id:newId()};
   for(const [k,s] of Object.entries(FIELDS))c[k]=$(s).value.trim();
-  c.qty=want?0:Math.max(0,parseInt($("#f-qty").value)||0);c.price=parseFloat($("#f-price").value)||0;c.wanted=want;c.deck=Math.min(c.deck||0,c.qty);
+  c.qty=want?0:Math.max(0,parseInt($("#f-qty").value)||0);c.wanted=want;c.deck=Math.min(c.deck||0,c.qty);
+  const p=parseFloat($("#f-price").value)||0;if(!old||p!==old.price){c.price=p;if(old&&p!==old.price){c.priceSource="Selbst eingetragen";c.priceDate=new Date().toISOString().slice(0,10)}}
   if(!c.name)return;
-  const file=$("#f-img").files[0];
+  const file=$("#f-img").files[0]||scanFile;
   $("#f-submit").disabled=true;
   safe(async()=>{
-    if(file){
-      if(!assets)throw {code:"noassets"};
-      const up=await assets.upload(file);c.img=up.url;c.imgId=up.id;
-    }
+    if(file){if(!assets)throw {code:"noassets"};const up=await assets.upload(file);c.img=up.url;c.imgId=up.id}
     await putCard(c);status(`„${c.name}“ gespeichert.`);resetForm();
   }).finally(()=>{$("#f-submit").disabled=false});
 });
 ["#q","#filter-cat","#filter-type","#sort"].forEach(s=>$(s).addEventListener("input",renderCards));
-
 $("#setform").addEventListener("submit",e=>{
   e.preventDefault();
-  const name=$("#s-name").value.trim(), total=parseInt($("#s-total").value)||0;
-  if(!name||!total)return;
-  const ex=sets.find(s=>s.name.toLowerCase()===name.toLowerCase());
-  safe(()=>putSet({id:ex?ex.id:newId(),name,total}));
-  $("#s-name").value="";$("#s-total").value="";
+  const name=$("#s-name").value.trim(), total=parseInt($("#s-total").value)||0;if(!name||!total)return;
+  const ex=mySets.find(s=>s.name.toLowerCase()===name.toLowerCase());
+  safe(()=>putSet({...(ex||{}),id:ex?ex.id:newId(),name,total}));$("#setform").reset();
+});
+
+// ---------- scanning ----------
+$("#scan-file").addEventListener("change",async e=>{
+  const file=e.target.files[0];e.target.value="";if(!file||!sample)return;
+  const out=$("#scan-out");out.textContent="Karte wird erkannt …";
+  const prompt=`Auf dem Foto ist eine Pokémon-Sammelkarte (meist deutsch). Lies die Angaben ab und antworte NUR mit einem JSON-Objekt mit diesen Feldern:
+{"name": Kartenname wie gedruckt,
+ "setCode": Set-Kürzel unten links (z. B. "DLR", "MEE"),
+ "number": Kartennummer unten links genau wie gedruckt (z. B. "085/103" oder "005"),
+ "category": "Pokémon" | "Trainer" | "Energie",
+ "type": einer von ${JSON.stringify(TYPES.map(t=>t[0]))},
+ "rarity": anhand des Symbols neben der Nummer: ● = "Häufig", ◆ = "Nicht so häufig", ★ = "Selten", sonst einer von ${JSON.stringify(RARITIES)},
+ "variant": "Normal" | "Reverse Holo" | "Holo" | "Full Art" | "Illustration Rare" | "Special Illustration Rare" | "Gold / Hyper Rare" | "Promo" (Reverse Holo = glänzender Rahmen bei nicht glänzendem Bild)}
+Felder, die du nicht sicher lesen kannst, als leeren String "".`;
+  try{
+    const r=await sample.json(prompt,{images:[file],modelTier:"default",cache:false});
+    const map={name:"#f-name",setCode:"#f-code",number:"#f-number",category:"#f-cat",type:"#f-type",rarity:"#f-rarity",variant:"#f-var"};
+    resetForm();
+    for(const [k,s] of Object.entries(map)){const v=r&&typeof r[k]==="string"?r[k].trim():"";if(v&&($(s).tagName!=="SELECT"||[...$(s).options].some(o=>o.value===v)))$(s).value=v}
+    const known=mySets.find(s=>s.code&&r&&s.code===r.setCode)||myCards.find(c=>r&&c.setCode===r.setCode&&c.set);
+    if(known)$("#f-set").value=known.name||known.set;
+    scanFile=file;$("#addbox").open=true;
+    out.textContent=r&&r.name?`Erkannt: ${r.name} ${r.number||""}. Bitte prüfen und auf „Hinzufügen“ tippen. Das Foto wird mitgespeichert.`:"Ich konnte die Karte nicht lesen. Versuch es mit einem schärferen Foto oder trag sie von Hand ein.";
+  }catch(err){
+    out.textContent=err&&err.code==="not_granted"?"Scannen wurde nicht erlaubt. Du kannst die Karte von Hand eintragen.":err&&err.code==="rate_limited"?"Gerade zu viele Anfragen. Warte kurz und versuch es noch einmal.":"Das Scannen hat nicht geklappt. Versuch es noch einmal oder trag die Karte von Hand ein.";
+  }
 });
 
 // ---------- derived ----------
-const owned=()=>cards.filter(c=>c.qty>0);
-const totalValue=()=>owned().reduce((a,c)=>a+c.qty*(c.price||0),0);
+const ownedOf=list=>list.filter(c=>c.qty>0);
+const valueOf=list=>ownedOf(list).reduce((a,c)=>a+c.qty*(c.price||0),0);
 const numOf=c=>{const m=String(c.number||"").match(/^\s*0*(\d+)/);return m?parseInt(m[1]):null};
 const cmLink=c=>`https://www.cardmarket.com/de/Pokemon/Products/Search?searchString=${encodeURIComponent(c.name)}`;
+const stat=(v,l)=>`<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+const snap=c=>({id:c.id,name:c.name,number:c.number||"",setCode:c.setCode||"",set:c.set||"",variant:c.variant||"Normal",img:safeImg(c.img),imgId:c.imgId||"",category:c.category||"",type:c.type||"",rarity:c.rarity||"",price:c.price||0,tcgdexId:c.tcgdexId||""});
 
 // ---------- render ----------
 function render(){
-  $("#setlist").innerHTML=[...new Set([...cards.map(c=>c.set),...sets.map(s=>s.name)].filter(Boolean))].sort().map(s=>`<option value="${esc(s)}">`).join("");
-  const o=owned();
-  $("#stats-top").innerHTML=stat(o.reduce((a,c)=>a+c.qty,0),"Karten insgesamt")+stat(o.length,"Verschiedene Karten")+stat(new Set(o.map(c=>c.set).filter(Boolean)).size,"Sets")+stat(eur(totalValue()),"Gesamtwert");
-  renderCards();renderValue();renderDeck();renderMissing();
+  document.querySelectorAll(".mine-only").forEach(x=>x.hidden=!isMine()||!canWrite);
+  const vb=$("#viewbar");vb.classList.toggle("other",!isMine());
+  $("#viewlabel").textContent=isMine()?"Deine Sammlung":`Du siehst die Sammlung von ${nameOf(viewing)}. Tippe bei einer Karte auf „Will ich“, um einen Tausch vorzuschlagen.`;
+  const sel=$("#viewsel");const opts=[{k:me.key,l:"Meine"},...collectors.filter(c=>c.id!==me.key).map(c=>({k:c.id,l:nameOf(c.id)}))];
+  sel.innerHTML=opts.filter(o=>o.k).map(o=>`<option value="${esc(o.k)}">${esc(o.l)}</option>`).join("");sel.value=viewing||"";
+  $("#setlist").innerHTML=[...new Set([...myCards.map(c=>c.set),...mySets.map(s=>s.name)].filter(Boolean))].sort().map(s=>`<option value="${esc(s)}">`).join("");
+  const o=ownedOf(cardsV());
+  $("#stats-top").innerHTML=stat(o.reduce((a,c)=>a+c.qty,0),"Karten insgesamt")+stat(o.length,"Verschiedene Karten")+stat(new Set(o.map(c=>c.set).filter(Boolean)).size,"Sets")+stat(eur(valueOf(cardsV())),"Gesamtwert");
+  renderCards();renderValue();renderDeck();renderMissing();renderDraft();renderFriends();
 }
-const stat=(v,l)=>`<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
 
 function renderCards(){
   const q=$("#q").value.trim().toLowerCase(), cat=$("#filter-cat").value, ty=$("#filter-type").value, so=$("#sort").value;
-  let list=cards.filter(c=>c.qty>0||c.wanted);
-  if(q)list=list.filter(c=>[c.name,c.set,c.number,c.rarity].join(" ").toLowerCase().includes(q));
+  const all=cardsV();let list=all.filter(c=>c.qty>0||c.wanted);
+  if(q)list=list.filter(c=>[c.name,c.set,c.setCode,c.number,c.rarity,c.variant].join(" ").toLowerCase().includes(q));
   if(cat)list=list.filter(c=>c.category===cat);
   if(ty)list=list.filter(c=>c.type===ty);
-  const sorters={new:(a,b)=>(b.createdAt||0)-(a.createdAt||0),name:(a,b)=>a.name.localeCompare(b.name,"de"),
-    price:(a,b)=>(b.price||0)-(a.price||0),set:(a,b)=>(a.set||"").localeCompare(b.set||"","de")||(numOf(a)??1e9)-(numOf(b)??1e9)};
+  const sorters={new:(a,b)=>(b.createdAt||0)-(a.createdAt||0),name:(a,b)=>a.name.localeCompare(b.name,"de"),price:(a,b)=>(b.price||0)-(a.price||0),set:(a,b)=>(a.set||"").localeCompare(b.set||"","de")||(numOf(a)??1e9)-(numOf(b)??1e9)};
   list.sort(sorters[so]);
-  const el=$("#cards");
-  if(!cards.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">Noch keine Karten. Trag oben deine erste Karte ein, zum Beispiel „Pikachu“ aus deinem Lieblingsset.</div>`;return}
+  const el=$("#cards"), mine=isMine();
+  if(!all.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">${mine?"Noch keine Karten. Tippe oben auf „Karte hinzufügen“ und scanne deine erste Karte.":"Diese Sammlung ist noch leer."}</div>`;return}
   if(!list.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1">Keine Karte passt zu deiner Suche.</div>`;return}
-  el.innerHTML=list.map(c=>`
-    <article class="card" style="--tc:${typeVar(c.type)}" data-id="${esc(c.id)}">
-      <button class="pic" type="button" data-act="zoom" aria-label="Bild von ${esc(c.name)} vergrößern">${c.img&&(/^https:\/\//.test(c.img)||c.img.startsWith("/_blob/"))?`<img src="${esc(c.img)}" alt="${esc(c.name)}" loading="lazy">`:`<span>Kein Foto</span>`}</button>
+  el.innerHTML=list.map(c=>{
+    const img=safeImg(c.img), wanted=draft.want.some(w=>w.id===c.id);
+    return `<article class="card" style="--tc:${typeVar(c.type)}" data-id="${esc(c.id)}">
+      <button class="pic" type="button" data-act="zoom" aria-label="Bild von ${esc(c.name)} vergrößern">${img?`<img src="${esc(img)}" alt="${esc(c.name)}" loading="lazy">`:`<span>Kein Foto</span>`}</button>
       <h3>${esc(c.name)}</h3>
       <div class="meta"><span>${esc(c.set||"Ohne Set")}</span>${c.setCode?`<span class="num">${esc(c.setCode)}</span>`:""}${c.number?`<span class="num">${esc(c.number)}</span>`:""}<span>${esc(c.condition||"")}</span></div>
-      <div class="chips">
-        ${c.variant&&c.variant!=="Normal"?`<span class="chip var">${esc(c.variant)}</span>`:""}<span class="chip">${esc(c.category)}</span>${c.type&&c.type!=="—"?`<span class="chip">${esc(c.type)}</span>`:""}
-        <span class="chip ${FOIL.has(c.rarity)?"foil":""}">${esc(c.rarity)}</span>
-        ${c.wanted?`<span class="chip want">Wunschliste</span>`:""}${c.example?`<span class="chip ex">Beispiel</span>`:""}
-      </div>
+      <div class="chips">${c.variant&&c.variant!=="Normal"?`<span class="chip var">${esc(c.variant)}</span>`:""}<span class="chip">${esc(c.category)}</span>${c.type&&c.type!=="—"?`<span class="chip">${esc(c.type)}</span>`:""}<span class="chip ${FOIL.has(c.rarity)?"foil":""}">${esc(c.rarity)}</span>${c.wanted?`<span class="chip want">Wunschliste</span>`:""}</div>
       <div class="cardfoot">
-        <div class="qty"><button class="btn small" data-act="minus" aria-label="Eine weniger">−</button><span>${c.qty}×</span><button class="btn small" data-act="plus" aria-label="Eine mehr">+</button></div>
-        <label style="display:flex;flex-direction:row;align-items:center;gap:4px">€<input type="number" min="0" step="0.01" value="${c.price||""}" data-act="price" style="width:80px;padding:4px 6px" aria-label="Preis pro Karte"></label>
+        ${mine&&canWrite?`<div class="qty"><button class="btn small" data-act="minus" aria-label="Eine weniger">−</button><span>${c.qty}×</span><button class="btn small" data-act="plus" aria-label="Eine mehr">+</button></div>
+        <label style="display:flex;flex-direction:row;align-items:center;gap:4px">€<input type="number" min="0" step="0.01" value="${c.price||""}" data-act="price" style="width:80px;padding:4px 6px" aria-label="Preis pro Karte"></label>`
+        :`<span class="qty">${c.qty}×</span><span class="num">${eur(c.price)}</span>${c.qty>0&&me.key&&canWrite?`<button class="btn small ${wanted?"on":""}" data-act="wantit">${wanted?"Im Tausch ✓":"Will ich"}</button>`:""}`}
       </div>
       ${c.priceSource?`<div class="hint">${esc(c.priceSource)}${c.priceDate?`, Stand ${esc(new Date(c.priceDate).toLocaleDateString("de-DE"))}`:""}</div>`:""}
-      <div class="cardfoot"><a href="${cmLink(c)}" target="_blank" rel="noopener" class="hint">Auf Cardmarket ansehen</a><span data-del class="row" style="gap:6px"><button class="btn small" data-act="edit">Bearbeiten</button><button class="btn small danger" data-act="del">Löschen</button></span></div>
-    </article>`).join("");
+      <div class="cardfoot"><a href="${cmLink(c)}" target="_blank" rel="noopener" class="hint">Auf Cardmarket ansehen</a>${mine&&canWrite?`<span data-del class="row" style="gap:6px"><button class="btn small" data-act="edit">Bearbeiten</button><button class="btn small danger" data-act="del">Löschen</button></span>`:""}</div>
+    </article>`}).join("");
+}
+function zoomImg(src,alt){
+  const z=document.createElement("div");z.className="zoom";z.tabIndex=-1;const i=document.createElement("img");i.src=src;i.alt=alt;z.append(i);
+  const close=()=>z.remove();z.addEventListener("click",close);z.addEventListener("keydown",ev=>{if(ev.key==="Escape")close()});document.body.append(z);z.focus();
 }
 $("#cards").addEventListener("click",e=>{
   const b=e.target.closest("button[data-act]");if(!b)return;
-  const id=b.closest(".card").dataset.id, c=cards.find(x=>x.id===id);if(!c)return;
+  const id=b.closest(".card").dataset.id, c=cardsV().find(x=>x.id===id);if(!c)return;
   const a=b.dataset.act;
+  if(a==="zoom"){const img=b.querySelector("img");if(img)zoomImg(img.src,c.name);else if(isMine())startEdit(c);return}
+  if(a==="wantit"){const i=draft.want.findIndex(w=>w.id===id);if(draft.to!==viewing){draft={to:viewing,want:[]}}i>=0?draft.want.splice(i,1):draft.want.push(snap(c));render();if(draft.want.length)$("#tradedraft").scrollIntoView({behavior:"smooth",block:"nearest"});return}
+  if(!isMine())return;
   if(a==="plus")safe(()=>putCard({...c,qty:c.qty+1,wanted:false}));
   if(a==="minus"&&c.qty>0)safe(()=>putCard({...c,qty:c.qty-1,deck:Math.min(c.deck||0,c.qty-1)}));
-  if(a==="del"){b.parentElement.innerHTML=`<span class="confirm">Wirklich löschen? <button class="btn small danger" data-act="del2">Ja</button><button class="btn small" data-act="no">Nein</button></span>`}
-  if(a==="del2")safe(()=>delCard(id));
   if(a==="edit")startEdit(c);
-  if(a==="zoom"){const img=b.querySelector("img");if(!img){startEdit(c);return}
-    const z=document.createElement("div");z.className="zoom";z.tabIndex=-1;const i=document.createElement("img");i.src=img.src;i.alt=c.name;z.append(i);
-    const close=()=>z.remove();z.addEventListener("click",close);z.addEventListener("keydown",ev=>{if(ev.key==="Escape")close()});document.body.append(z);z.focus()}
+  if(a==="del")b.parentElement.innerHTML=`<span class="confirm">Wirklich löschen? <button class="btn small danger" data-act="del2">Ja</button><button class="btn small" data-act="no">Nein</button></span>`;
+  if(a==="del2")safe(()=>delCard(id));
   if(a==="no")renderCards();
 });
 $("#cards").addEventListener("change",e=>{
-  if(e.target.dataset.act!=="price")return;
-  const id=e.target.closest(".card").dataset.id, c=cards.find(x=>x.id===id);
-  const p=parseFloat(e.target.value)||0; if(c&&p!==c.price)safe(()=>putCard({...c,price:p}));
+  if(e.target.dataset.act!=="price"||!isMine())return;
+  const id=e.target.closest(".card").dataset.id, c=myCards.find(x=>x.id===id);
+  const p=parseFloat(e.target.value)||0;if(c&&p!==c.price)safe(()=>putCard({...c,price:p,priceSource:"Selbst eingetragen",priceDate:new Date().toISOString().slice(0,10)}));
 });
 
 function renderValue(){
-  const o=owned(), tv=totalValue(), n=o.reduce((a,c)=>a+c.qty,0);
+  const all=cardsV(), o=ownedOf(all), tv=valueOf(all), n=o.reduce((a,c)=>a+c.qty,0);
   const top=[...o].sort((a,b)=>(b.price||0)-(a.price||0))[0];
-  const priced=o.filter(c=>c.price>0).length;
-  $("#stats-value").innerHTML=stat(eur(tv),"Gesamtwert")+stat(eur(n?tv/n:0),"Ø pro Karte")+stat(top&&top.price?eur(top.price):"–","Teuerste Karte")+stat(`${priced}/${o.length}`,"Karten mit Preis");
-  const rows=[...o].filter(c=>c.price>0).sort((a,b)=>b.price*b.qty-a.price*a.qty).slice(0,10);
-  $("#top-table").innerHTML=rows.length?`<tr><th>Karte</th><th class="r">Anz.</th><th class="r">Stück</th><th class="r">Summe</th></tr>`+rows.map(c=>`<tr><td>${esc(c.name)}<div class="hint">${esc(c.set)} <span class="num">${esc(c.number)}</span></div></td><td class="r">${c.qty}</td><td class="r">${eur(c.price)}</td><td class="r"><b>${eur(c.price*c.qty)}</b></td></tr>`).join(""):`<tr><td class="hint">Trag bei deinen Karten Preise ein, dann erscheinen hier die wertvollsten.</td></tr>`;
+  $("#stats-value").innerHTML=stat(eur(tv),"Gesamtwert")+stat(eur(n?tv/n:0),"Ø pro Karte")+stat(top&&top.price?eur(top.price):"–","Teuerste Karte")+stat(`${o.filter(c=>c.price>0).length}/${o.length}`,"Karten mit Preis");
+  const rows=o.filter(c=>c.price>0).sort((a,b)=>b.price*b.qty-a.price*a.qty).slice(0,10);
+  $("#top-table").innerHTML=rows.length?`<tr><th>Karte</th><th class="r">Anz.</th><th class="r">Stück</th><th class="r">Summe</th></tr>`+rows.map(c=>`<tr><td>${esc(c.name)}<div class="hint">${esc(c.set)} <span class="num">${esc(c.number)}</span>${c.variant&&c.variant!=="Normal"?" · "+esc(c.variant):""}</div></td><td class="r">${c.qty}</td><td class="r">${eur(c.price)}</td><td class="r"><b>${eur(c.price*c.qty)}</b></td></tr>`).join(""):`<tr><td class="hint">Noch keine Preise eingetragen.</td></tr>`;
   const bySet={};o.forEach(c=>{const k=c.set||"Ohne Set";bySet[k]=(bySet[k]||0)+c.qty*(c.price||0)});
-  const ent=Object.entries(bySet).sort((a,b)=>b[1]-a[1]); const max=Math.max(1,...ent.map(e=>e[1]));
+  const ent=Object.entries(bySet).sort((a,b)=>b[1]-a[1]);const max=Math.max(.0001,...ent.map(e=>e[1]));
   $("#set-value").innerHTML=ent.length?ent.map(([s,v])=>`<tr><td>${esc(s)}</td><td style="width:45%"><div class="bar"><i style="width:${(v/max*100).toFixed(1)}%"></i></div></td><td class="r">${eur(v)}</td></tr>`).join(""):`<tr><td class="hint">Noch keine Karten.</td></tr>`;
 }
 
-function isBasicEnergy(c){return c.category==="Energie"&&/^(basis[- ]?)?(pflanzen|feuer|wasser|elektro|psycho|kampf|finsternis|metall|fee)[- ]?energie$/i.test(c.name.trim())}
+function isBasicEnergy(c){return c.category==="Energie"&&/^(basis[- ]?)?(pflanzen|feuer|wasser|elektro|psycho|kampf|finsternis|metall|fee)[- ]?energie$/i.test(String(c.name).trim())}
 function renderDeck(){
-  const inDeck=cards.filter(c=>(c.deck||0)>0);
-  const tot=inDeck.reduce((a,c)=>a+c.deck,0);
+  const all=cardsV(), inDeck=all.filter(c=>(c.deck||0)>0), tot=inDeck.reduce((a,c)=>a+c.deck,0), mine=isMine()&&canWrite;
   const el=$("#deck-total");el.textContent=tot;el.className="deckcount "+(tot===60?"ok":tot>0?"bad":"");
   const by=k=>inDeck.filter(c=>c.category===k).reduce((a,c)=>a+c.deck,0);
   $("#deck-split").innerHTML=stat(by("Pokémon"),"Pokémon")+stat(by("Trainer"),"Trainer")+stat(by("Energie"),"Energie");
-  const warn=[];
-  if(tot&&tot!==60)warn.push(tot<60?`Es fehlen noch ${60-tot} Karten.`:`${tot-60} Karten zu viel.`);
-  const names={};inDeck.forEach(c=>{if(!isBasicEnergy(c))names[c.name.toLowerCase()]=(names[c.name.toLowerCase()]||0)+c.deck});
-  Object.entries(names).forEach(([n,k])=>{if(k>4){const nm=inDeck.find(c=>c.name.toLowerCase()===n).name;warn.push(`„${nm}“ ist ${k}× drin, erlaubt sind 4.`)}});
-  if(tot&&!by("Pokémon"))warn.push("Dein Deck braucht mindestens ein Basis-Pokémon.");
+  const warn=[];if(tot&&tot!==60)warn.push(tot<60?`Es fehlen noch ${60-tot} Karten.`:`${tot-60} Karten zu viel.`);
+  const nm={};inDeck.forEach(c=>{if(!isBasicEnergy(c)){const k=c.name.toLowerCase();nm[k]=(nm[k]||0)+c.deck}});
+  Object.entries(nm).forEach(([n,k])=>{if(k>4)warn.push(`„${inDeck.find(c=>c.name.toLowerCase()===n).name}“ ist ${k}× drin, erlaubt sind 4.`)});
+  if(tot&&!by("Pokémon"))warn.push("Das Deck braucht mindestens ein Basis-Pokémon.");
   $("#deck-warn").innerHTML=warn.map(w=>`<li>${esc(w)}</li>`).join("");
   const order={"Pokémon":0,"Trainer":1,"Energie":2};
-  $("#deck-table").innerHTML=inDeck.length?`<tr><th class="r">Anz.</th><th>Karte</th><th></th></tr>`+inDeck.sort((a,b)=>order[a.category]-order[b.category]||a.name.localeCompare(b.name,"de")).map(c=>`<tr data-id="${esc(c.id)}"><td class="r"><b>${c.deck}</b></td><td>${esc(c.name)}<div class="hint">${esc(c.category)} · ${esc(c.set)} <span class="num">${esc(c.number)}</span></div></td><td class="r"><button class="btn small" data-act="dminus" aria-label="Eine aus dem Deck nehmen">−</button></td></tr>`).join(""):`<tr><td class="hint">Dein Deck ist leer. Füge rechts Karten aus deiner Sammlung hinzu.</td></tr>`;
+  $("#deck-table").innerHTML=inDeck.length?`<tr><th class="r">Anz.</th><th>Karte</th><th></th></tr>`+[...inDeck].sort((a,b)=>(order[a.category]??3)-(order[b.category]??3)||a.name.localeCompare(b.name,"de")).map(c=>`<tr data-id="${esc(c.id)}"><td class="r"><b>${c.deck}</b></td><td>${esc(c.name)}<div class="hint">${esc(c.category)} · ${esc(c.set)} <span class="num">${esc(c.number)}</span></div></td><td class="r">${mine?`<button class="btn small" data-act="dminus" aria-label="Eine aus dem Deck nehmen">−</button>`:""}</td></tr>`).join(""):`<tr><td class="hint">${mine?"Das Deck ist leer. Füge rechts Karten aus deiner Sammlung hinzu.":"In dieser Sammlung gibt es noch kein Deck."}</td></tr>`;
   renderPool();
 }
 function renderPool(){
   const q=$("#deck-q").value.trim().toLowerCase();
-  const pool=owned().filter(c=>(c.deck||0)<c.qty&&(!q||[c.name,c.set].join(" ").toLowerCase().includes(q))).sort((a,b)=>a.name.localeCompare(b.name,"de"));
-  $("#deck-pool").innerHTML=pool.length?pool.map(c=>`<tr data-id="${esc(c.id)}"><td>${esc(c.name)}<div class="hint">${esc(c.category)} · frei: ${c.qty-(c.deck||0)}</div></td><td class="r"><button class="btn small primary" data-act="dplus">+ Deck</button></td></tr>`).join(""):`<tr><td class="hint">${owned().length?"Alle passenden Karten liegen schon im Deck.":"Leg zuerst Karten in deiner Sammlung an."}</td></tr>`;
+  const pool=ownedOf(myCards).filter(c=>(c.deck||0)<c.qty&&(!q||[c.name,c.set].join(" ").toLowerCase().includes(q))).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+  $("#deck-pool").innerHTML=pool.length?pool.map(c=>`<tr data-id="${esc(c.id)}"><td>${esc(c.name)}<div class="hint">${esc(c.category)} · frei: ${c.qty-(c.deck||0)}</div></td><td class="r"><button class="btn small primary" data-act="dplus">+ Deck</button></td></tr>`).join(""):`<tr><td class="hint">${myCards.length?"Alle passenden Karten liegen schon im Deck.":"Leg zuerst Karten in deiner Sammlung an."}</td></tr>`;
 }
 $("#deck-q").addEventListener("input",renderPool);
 document.querySelector('[data-view="deck"]').addEventListener("click",e=>{
-  const b=e.target.closest("button[data-act]");if(!b)return;
-  const tr=b.closest("tr"), c=tr&&cards.find(x=>x.id===tr.dataset.id);
+  const b=e.target.closest("button[data-act]");if(!b||!isMine())return;
+  const tr=b.closest("tr"), c=tr&&myCards.find(x=>x.id===tr.dataset.id);
   if(b.dataset.act==="dplus"&&c)safe(()=>putCard({...c,deck:(c.deck||0)+1}));
   if(b.dataset.act==="dminus"&&c)safe(()=>putCard({...c,deck:Math.max(0,(c.deck||0)-1)}));
 });
 $("#deck-clear").addEventListener("click",()=>{
   const m=$("#deck-msg");
-  if(m.dataset.armed){m.dataset.armed="";m.textContent="";safe(async()=>{for(const c of cards.filter(c=>c.deck>0))await putCard({...c,deck:0})});}
+  if(m.dataset.armed){m.dataset.armed="";m.textContent="";safe(async()=>{for(const c of myCards.filter(c=>c.deck>0))await putCard({...c,deck:0})})}
   else{m.dataset.armed="1";m.textContent="Nochmal klicken zum Bestätigen.";setTimeout(()=>{m.dataset.armed="";m.textContent=""},4000)}
 });
 $("#deck-copy").addEventListener("click",()=>{
-  const inDeck=cards.filter(c=>c.deck>0);
-  const txt=["Pokémon","Trainer","Energie"].map(k=>{const l=inDeck.filter(c=>c.category===k);if(!l.length)return"";return`${k}: ${l.reduce((a,c)=>a+c.deck,0)}\n`+l.map(c=>`${c.deck} ${c.name}${c.set?" "+c.set:""}${c.number?" "+c.number:""}`).join("\n")}).filter(Boolean).join("\n\n");
-  const m=$("#deck-msg");
-  navigator.clipboard.writeText(txt).then(()=>m.textContent="Deckliste kopiert.",()=>m.textContent="Kopieren nicht möglich.");
+  const inDeck=cardsV().filter(c=>c.deck>0);
+  const txt=["Pokémon","Trainer","Energie"].map(k=>{const l=inDeck.filter(c=>c.category===k);if(!l.length)return"";return`${k}: ${l.reduce((a,c)=>a+c.deck,0)}\n`+l.map(c=>`${c.deck} ${c.name}${c.setCode?" "+c.setCode:""}${c.number?" "+c.number.split("/")[0]:""}`).join("\n")}).filter(Boolean).join("\n\n");
+  const m=$("#deck-msg");navigator.clipboard.writeText(txt).then(()=>m.textContent="Deckliste kopiert.",()=>m.textContent="Kopieren nicht möglich.");
 });
 
 function renderMissing(){
-  const prog=sets.map(s=>{const have=new Set(owned().filter(c=>c.set.toLowerCase()===s.name.toLowerCase()).map(numOf).filter(n=>n&&n<=s.total));return{...s,have:have.size,nums:have}}).sort((a,b)=>b.have/b.total-a.have/a.total);
-  $("#set-progress").innerHTML=prog.length?`<tr><th>Set</th><th>Fortschritt</th><th class="r">Karten</th><th></th></tr>`+prog.map(s=>`<tr data-id="${esc(s.id)}"><td>${esc(s.name)}</td><td style="width:40%"><div class="bar ${s.have>=s.total?"ok":""}"><i style="width:${Math.min(100,s.have/s.total*100).toFixed(1)}%"></i></div></td><td class="r num">${s.have}/${s.total}</td><td class="r"><button class="btn small danger" data-act="sdel" aria-label="Set entfernen">×</button></td></tr>`).join(""):`<tr><td class="hint">Noch kein Set angelegt. Trag oben ein Set und seine Kartenzahl ein.</td></tr>`;
-  const wants=cards.filter(c=>c.wanted&&c.qty===0);
-  $("#want-table").innerHTML=wants.length?wants.map(c=>`<tr data-id="${esc(c.id)}"><td>${esc(c.name)}<div class="hint">${esc(c.set)} <span class="num">${esc(c.number)}</span>${c.price?` · ca. ${eur(c.price)}`:""}</div></td><td class="r"><button class="btn small primary" data-act="got">Hab ich jetzt</button></td></tr>`).join("")+`<tr><td class="hint">Summe ca. ${eur(wants.reduce((a,c)=>a+(c.price||0),0))}</td><td></td></tr>`:`<tr><td class="hint">Deine Wunschliste ist leer. Setz beim Hinzufügen das Häkchen „Auf Wunschliste“.</td></tr>`;
+  const all=cardsV(), o=ownedOf(all), mine=isMine()&&canWrite;
+  const prog=setsV().map(s=>{const have=new Set(o.filter(c=>(c.set||"").toLowerCase()===s.name.toLowerCase()||(s.code&&c.setCode===s.code)).map(numOf).filter(n=>n&&n<=s.total));return{...s,have:have.size,nums:have}}).sort((a,b)=>b.have/b.total-a.have/a.total);
+  $("#set-progress").innerHTML=prog.length?`<tr><th>Set</th><th>Fortschritt</th><th class="r">Karten</th><th></th></tr>`+prog.map(s=>`<tr data-id="${esc(s.id)}"><td>${esc(s.name)}${s.code?` <span class="num hint">${esc(s.code)}</span>`:""}</td><td style="width:40%"><div class="bar ${s.have>=s.total?"ok":""}"><i style="width:${Math.min(100,s.have/s.total*100).toFixed(1)}%"></i></div></td><td class="r num">${s.have}/${s.total}</td><td class="r">${mine?`<button class="btn small danger" data-act="sdel" aria-label="Set entfernen">×</button>`:""}</td></tr>`).join(""):`<tr><td class="hint">Noch kein Set angelegt.</td></tr>`;
+  const wants=all.filter(c=>c.wanted&&c.qty===0);
+  $("#want-table").innerHTML=wants.length?wants.map(c=>`<tr data-id="${esc(c.id)}"><td>${esc(c.name)}<div class="hint">${esc(c.set)} <span class="num">${esc(c.number)}</span>${c.price?` · ca. ${eur(c.price)}`:""}</div></td><td class="r">${mine?`<button class="btn small primary" data-act="got">Hab ich jetzt</button>`:""}</td></tr>`).join(""):`<tr><td class="hint">Die Wunschliste ist leer.</td></tr>`;
   const sel=$("#miss-set"), cur=sel.value;
   sel.innerHTML=prog.length?prog.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join(""):`<option value="">Kein Set angelegt</option>`;
   if(prog.some(s=>s.id===cur))sel.value=cur;
-  const s=prog.find(x=>x.id===sel.value);
-  if(!s){$("#miss-list").textContent="";return}
-  const miss=[];for(let i=1;i<=s.total;i++)if(!s.nums.has(i))miss.push(i);
+  const s=prog.find(x=>x.id===sel.value);if(!s){$("#miss-list").textContent="";return}
+  const miss=[];for(let i=1;i<=s.total;i++)if(!s.nums.has(i))miss.push(String(i).padStart(3,"0"));
   $("#miss-list").textContent=miss.length?`${miss.length} fehlen: `+miss.join(", "):"Set komplett!";
 }
 $("#miss-set").addEventListener("change",renderMissing);
 document.querySelector('[data-view="fehlend"]').addEventListener("click",e=>{
-  const b=e.target.closest("button[data-act]");if(!b)return;const id=b.closest("tr").dataset.id;
+  const b=e.target.closest("button[data-act]");if(!b||!isMine())return;const id=b.closest("tr").dataset.id;
   if(b.dataset.act==="sdel")safe(()=>delSet(id));
-  if(b.dataset.act==="got"){const c=cards.find(x=>x.id===id);if(c)safe(()=>putCard({...c,qty:1,wanted:false}))}
+  if(b.dataset.act==="got"){const c=myCards.find(x=>x.id===id);if(c)safe(()=>putCard({...c,qty:1,wanted:false}))}
 });
 
-// ---------- login & boot ----------
-let ready=null;
-function boot(){
-  if(!ready)ready=(async()=>{
-    const d=window.claude?await window.claude.use("db"):null;
-    if(!d){fallback=true;return}
-    db=d;
-    try{assets=await window.claude.use("assets")}catch(e){}
-    try{const u=await window.claude.use("user");const w=u&&await u.can("data.write");if(w===false){canWrite=false;document.querySelectorAll("form#addform button, form#setform button, #addbox").forEach(x=>x.hidden=true)}}catch(e){}
-  })();
-  return ready;
+// ---------- trading ----------
+function miniList(list){return list.map(c=>`<figure>${safeImg(c.img)?`<img src="${esc(safeImg(c.img))}" alt="">`:`<span class="ph"></span>`}<figcaption>${esc(c.name)}<br><span class="num">${esc(c.number)}</span></figcaption></figure>`).join("")||`<span class="hint">nichts</span>`}
+function renderDraft(){
+  const box=$("#tradedraft");const show=!isMine()&&draft.to===viewing&&draft.want.length>0;box.hidden=!show;if(!show)return;
+  $("#draft-want").innerHTML=miniList(draft.want);
+  const chosen=new Set([...document.querySelectorAll("#draft-offer input:checked")].map(i=>i.value));
+  const own=ownedOf(myCards).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+  $("#draft-offer").innerHTML=own.length?own.map(c=>`<label><input type="checkbox" value="${esc(c.id)}" ${chosen.has(c.id)?"checked":""}> ${esc(c.name)} <span class="num hint">${esc(c.setCode)} ${esc(c.number)}</span>${c.variant&&c.variant!=="Normal"?` <span class="hint">${esc(c.variant)}</span>`:""}</label>`).join(""):`<span class="hint">Du hast noch keine Karten zum Anbieten.</span>`;
 }
-boot();
-async function login(name){
-  const key=userKey(name);if(!key){status("Bitte gib einen Namen mit Buchstaben oder Zahlen ein.",true);return}
-  me=key;try{localStorage.setItem("pkmn-user",name.trim())}catch(e){}
-  $("#who-name").textContent=name.trim();$("#who").hidden=false;$("#tabs").hidden=false;$("#login-wrap").hidden=true;$("#app").hidden=false;
-  cards=[];sets=[];render();status("Sammlung wird geladen …");
-  await boot();
-  if(!db){loadLocal();render();status("Lokaler Modus: Deine Karten werden nur in diesem Browser gespeichert.");return}
-  const timer=setTimeout(()=>status("Deine Sammlung ist gerade nicht erreichbar. Was du siehst, ist vielleicht nicht aktuell."),10000);
-  let gotCards=false,gotSets=false;
-  const done=()=>{if(gotCards&&gotSets){clearTimeout(timer);status(canWrite?"Gespeichert. Änderungen werden sofort übernommen.":"Nur-Lesen: Du kannst diese Sammlung ansehen, aber nicht ändern.")}};
-  unsubs.push(col("cards").onSnapshot(s=>{cards=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotCards=true;render();done()},e=>{clearTimeout(timer);status("Die Karten konnten nicht geladen werden.",true)}));
-  unsubs.push(col("sets").onSnapshot(s=>{sets=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache)gotSets=true;render();done()},e=>{}));
+$("#draft-clear").addEventListener("click",()=>{draft={to:null,want:[]};render()});
+$("#draft-send").addEventListener("click",()=>{
+  const give=[...document.querySelectorAll("#draft-offer input:checked")].map(i=>myCards.find(c=>c.id===i.value)).filter(Boolean).map(snap);
+  if(!draft.want.length)return;
+  const t={fromKey:me.key,fromUid:me.uid,toKey:draft.to,give,want:draft.want,msg:$("#draft-msg").value.trim().slice(0,200),status:"offen",createdAt:Date.now(),applied:{}};
+  safe(async()=>{await db.collection("trades").doc(newId()).set(t);draft={to:null,want:[]};$("#draft-msg").value="";status(`Tausch an ${nameOf(t.toKey)} gesendet.`);render()});
+});
+async function applyTrade(t){
+  if(applying.has(t.id))return;applying.add(t.id);
+  try{
+    const iAmFrom=t.fromKey===me.key, giveAway=iAmFrom?t.give:t.want, receive=iAmFrom?t.want:t.give;
+    for(const g of giveAway||[]){const c=myCards.find(x=>x.id===g.id);if(!c)continue;const q=Math.max(0,c.qty-1);await putCard({...c,qty:q,deck:Math.min(c.deck||0,q)})}
+    for(const r of receive||[]){
+      const same=myCards.find(c=>(r.tcgdexId&&c.tcgdexId===r.tcgdexId&&(c.variant||"Normal")===(r.variant||"Normal"))||(c.name===r.name&&c.number===r.number&&(c.variant||"Normal")===(r.variant||"Normal")));
+      if(same)await putCard({...same,qty:same.qty+1,wanted:false});
+      else{const {id,...rest}=r;await putCard({...rest,id:newId(),qty:1,deck:0,wanted:false,condition:"Near Mint",createdAt:Date.now(),priceSource:r.price?"Aus Tausch übernommen":""})}
+    }
+    await db.collection("trades").doc(t.id).update({applied:{[me.key]:true}});
+    status(`Tausch mit ${nameOf(iAmFrom?t.toKey:t.fromKey)} ist in deiner Sammlung eingetragen.`);
+  }catch(e){status(errText(e),true)}
+  finally{applying.delete(t.id)}
 }
-function logout(){
-  unsubs.forEach(u=>u());unsubs=[];me=null;cards=[];sets=[];resetForm();
-  try{localStorage.removeItem("pkmn-user")}catch(e){}
-  $("#who").hidden=true;$("#tabs").hidden=true;$("#app").hidden=true;$("#login-wrap").hidden=false;status("Abgemeldet.");$("#login-name").value="";$("#login-name").focus();
+function checkTrades(){
+  if(!me.key||!canWrite||!myLoaded)return;
+  for(const t of trades)if(t.status==="angenommen"&&(t.fromKey===me.key||t.toKey===me.key)&&!(t.applied&&t.applied[me.key]))applyTrade(t);
 }
-$("#loginform").addEventListener("submit",e=>{e.preventDefault();login($("#login-name").value)});
-$("#logout").addEventListener("click",logout);
-let saved=null;try{saved=localStorage.getItem("pkmn-user")}catch(e){}
-if(saved)login(saved);else status("Melde dich mit deinem Sammlernamen an.");
+function renderFriends(){
+  const mineT=trades.filter(t=>t.fromKey===me.key||t.toKey===me.key).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  const incoming=mineT.filter(t=>t.toKey===me.key&&t.status==="offen").length;
+  const bd=$("#trade-badge");bd.hidden=!incoming;bd.textContent=incoming;
+  $("#trades").innerHTML=mineT.length?mineT.slice(0,30).map(t=>{
+    const incomingT=t.toKey===me.key, other=incomingT?t.fromKey:t.toKey;
+    const head=incomingT?`<b>${esc(nameOf(other))}</b> möchte mit dir tauschen`:`Dein Vorschlag an <b>${esc(nameOf(other))}</b>`;
+    const left=incomingT?t.give:t.give, right=t.want;
+    const btns=t.status==="offen"&&canWrite?(incomingT?`<button class="btn small primary" data-tr="accept">Annehmen</button><button class="btn small danger" data-tr="decline">Ablehnen</button>`:`<button class="btn small" data-tr="withdraw">Zurückziehen</button>`):"";
+    return `<div class="trade" data-id="${esc(t.id)}">
+      <div class="row" style="justify-content:space-between"><span>${head}</span><span class="pill ${esc(t.status)}">${esc(t.status)}</span></div>
+      ${t.msg?`<p class="hint">„${esc(t.msg)}“</p>`:""}
+      <div class="sides"><div><div class="hint">${esc(nameOf(t.fromKey))} gibt</div><div class="mini">${miniList(left)}</div></div><div class="arrow" aria-hidden="true">⇄</div><div><div class="hint">${esc(nameOf(t.toKey))} gibt</div><div class="mini">${miniList(right)}</div></div></div>
+      ${btns?`<div class="row">${btns}</div>`:""}
+    </div>`}).join(""):`<div class="empty">Noch keine Tauschanfragen. Öffne oben bei „Sammlung von“ die Sammlung eines Freundes und tippe bei einer Karte auf „Will ich“.</div>`;
+  const ranked=[...collectors].sort((a,b)=>(b.value||0)-(a.value||0));
+  $("#people").innerHTML=ranked.length?ranked.map((c,i)=>`<div class="person"><span class="rank">${i+1}</span><span class="avatar" aria-hidden="true">${esc(nameOf(c.id).slice(0,1).toUpperCase())}</span><div class="grow"><b>${esc(nameOf(c.id))}</b>${c.id===me.key?" <span class=\"hint\">(du)</span>":""}<div class="hint">${c.count||0} Karten · ${eur(c.value)}</div></div>${c.id!==me.key?`<button class="btn small" data-look="${esc(c.id)}">Ansehen</button>`:""}</div>`).join(""):`<div class="empty">Noch keine Sammler.</div>`;
+}
+$("#trades").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-tr]");if(!b)return;const id=b.closest(".trade").dataset.id, t=trades.find(x=>x.id===id);if(!t)return;
+  const st={accept:"angenommen",decline:"abgelehnt",withdraw:"zurückgezogen"}[b.dataset.tr];b.disabled=true;
+  safe(()=>db.collection("trades").doc(id).update({status:st,decidedAt:Date.now()}));
+});
+$("#people").addEventListener("click",e=>{const b=e.target.closest("button[data-look]");if(!b)return;setView(b.dataset.look);location.hash="sammlung";showTab("sammlung")});
+$("#viewsel").addEventListener("change",e=>setView(e.target.value));
+
+// ---------- share ----------
+$("#share-link").value=SHARE_URL;
+$("#share-copy").addEventListener("click",()=>{navigator.clipboard.writeText(SHARE_URL).then(()=>$("#share-msg").textContent="Link kopiert.",()=>{$("#share-link").select();$("#share-msg").textContent="Markiert. Kopiere ihn mit Strg+C."})});
+try{if(window.QRCode)new QRCode($("#qr"),{text:SHARE_URL,width:180,height:180,colorDark:"#1b2140",colorLight:"#ffffff"});else $("#qr").textContent=SHARE_URL}catch(e){$("#qr").textContent=SHARE_URL}
+
+// ---------- subscriptions ----------
+function setView(key){
+  if(!key||key===viewing)return;
+  otherUnsubs.forEach(u=>u());otherUnsubs=[];otherCards=[];otherSets=[];viewing=key;
+  if(key!==me.key){
+    otherUnsubs.push(col(key,"cards").onSnapshot(s=>{otherCards=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>status("Diese Sammlung konnte nicht geladen werden.",true)));
+    otherUnsubs.push(col(key,"sets").onSnapshot(s=>{otherSets=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{}));
+  }
+  render();
+}
+let lastProfile=null;
+async function syncProfile(){
+  if(!canWrite||!me.key)return;
+  const o=ownedOf(myCards), prof={uid:me.uid||"",count:o.reduce((a,c)=>a+c.qty,0),value:Math.round(valueOf(myCards)*100)/100};
+  const cur=collectors.find(c=>c.id===me.key);
+  const key=JSON.stringify(prof);if(lastProfile===key)return;
+  if(cur&&cur.uid===prof.uid&&cur.count===prof.count&&cur.value===prof.value){lastProfile=key;return}
+  lastProfile=key;
+  try{await db.doc(`sammler/${me.key}`).set({...prof,updatedAt:Date.now()})}catch(e){if(e&&e.code==="invalid_argument"){canWrite=false;render()}}
+}
+async function resolveNames(){
+  if(!user)return;const ids=collectors.map(c=>c.uid).filter(u=>u&&!(u in names));if(!ids.length)return;
+  try{const ps=await user.profiles(ids);for(const id of ids)names[id]=(ps&&ps[id]&&ps[id].name)||"";render()}catch(e){}
+}
+
+(async()=>{
+  const c=window.claude;
+  db=c?await c.use("db"):null;
+  if(!db){status("Die Sammlung ist hier nicht erreichbar. Öffne die Seite über claude.ai und melde dich an.",true);document.querySelectorAll(".mine-only").forEach(x=>x.hidden=true);return}
+  user=await c.use("user");
+  const [owner,uid,w]=await Promise.all([user?user.isOwner():false,user?user.id():null,user?user.can("data.write"):null].map(p=>Promise.resolve(p).catch(()=>null)));
+  me={owner:!!owner,uid:uid||null,key:owner?OWNER_KEY:(uid||null)};
+  if(!me.key){canWrite=false;status("Du kannst Sammlungen ansehen. Für eine eigene Sammlung melde dich bei Claude an.")}
+  if(w===false&&!owner)canWrite=false;
+  c.use("assets").then(a=>{assets=a}).catch(()=>{});
+  c.use("sample").then(async s=>{if(!s)return;const l=await s.limits().catch(()=>null);if(l&&l.images){sample=s;$("#scanrow").hidden=false}}).catch(()=>{});
+  const timer=setTimeout(()=>status("Die Sammlung ist gerade nicht erreichbar. Was du siehst, ist vielleicht nicht aktuell."),10000);
+  db.collection("sammler").onSnapshot(s=>{collectors=s.docs.map(d=>({id:d.id,...d.data()}));resolveNames();if(!viewing&&!me.key&&collectors.length)setView(collectors.find(x=>x.id===OWNER_KEY)?OWNER_KEY:collectors[0].id);render()},()=>{});
+  db.collection("trades").onSnapshot(s=>{trades=s.docs.map(d=>({id:d.id,...d.data()}));render();checkTrades()},()=>{});
+  if(me.key){
+    viewing=me.key;
+    col(me.key,"cards").onSnapshot(s=>{myCards=s.docs.map(d=>({id:d.id,...d.data()}));if(!s.metadata.fromCache){myLoaded=true;clearTimeout(timer);status(canWrite?(me.owner?"Angemeldet als Lenox. Änderungen werden sofort gespeichert.":"Das ist deine eigene Sammlung. Änderungen werden sofort gespeichert."):"Nur ansehen: Bitte Lenox, dich als Bearbeiter einzuladen, dann bekommst du eine eigene Sammlung.");syncProfile();checkTrades()}render()},()=>{clearTimeout(timer);status("Die Karten konnten nicht geladen werden.",true)});
+    col(me.key,"sets").onSnapshot(s=>{mySets=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
+  }
+  render();
+})();
 </script>
